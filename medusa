@@ -1,0 +1,52 @@
+#Select the gdv version you want by uncommenting it:
+#export gdvroot="/home/gauss/gdvh12p"
+#export gdvroot="/home/gauss/gdvh13"
+#export gdvroot="/home/gauss/gdvh21"
+#export gdvroot="/home/gauss/gdvh28"
+#export gdvroot="/home/gauss/gdvh33m"
+#export gdvroot="/home/jjgoings/gdvh34"
+export gdvroot="/home/gauss/gdvh36"
+#export gdvroot="/home/gauss/gdvh38p"
+#export gdvroot="/home/gauss/gdvi01p"
+#export gdvroot="/home/gauss/gdvi02"
+#export gdvroot="/home/gauss/gdvi03p"
+#export gdvroot="/home/gauss/gdvi04p"
+source $gdvroot/gdv/bsd/gdv.profile
+export GAUSS_SCRDIR="/home/GauScr"
+
+#G09
+export g09root="/home/gauss/g09"
+source $g09root/g09/bsd/g09.profile
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+
+#PGI compiler env
+export PGI=/opt/pgi
+export MANPATH="$PGI/linux86-64/2014/man:$PGI/linux86-64/2014/mpi/mpich/man:$PGI/linux86-64/2014/mpi2/mpich/share/man::$PGI/linux86-64/2014/mpi/mvapich/man"
+export LM_LICENSE_FILE=$PGI/license.dat
+
+#CUDA env
+export CUDA_HOME=/usr/local/cuda-7.5 
+export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
+export LD_LIBRARY_PATH="/home/jjgoings/gcc-4.9.2/lib:/home/jjgoings/gcc-4.9.2/lib64:/usr/lib64:/usr/local/lib/:/usr/local/libint/2.1.0-beta/lib:/usr/local/cuda-7.0/lib64:"$LD_LIBRARY_PATH
+
+#Paths for executables
+export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/14.1/bin:$PGI/linux86-64/14.1/mpi/mpich/bin:/opt/pgi/linux86-64/14.1/mpi2/mpich/bin:/opt/pgi/linux86-64/14.1/mpi/mvapich/bin:$PATH
+
+source ~/.alias
+#source /home/jjgoings/torch/install/bin/torch-activate
+
+export PSI_SCRATCH=/home/jjgoings/SCRATCH
+export PSI=/home/jjgoings/psi4public
+export PSIDATADIR=/home/jjgoings/psi4public/lib
+export PATH=$PATH:$PSI/bin
+
+stty erase '^?'
+
+#set prompt='[%n@%m %c]# '
+#set prompt = "[%n@%m:%~> "
+#set savehist = 10
+#history -L ~/.freqcmds
+
