@@ -1,3 +1,4 @@
+
 #Select the gdv version you want by uncommenting it:
 #export gdvroot="/home/gauss/gdvh12p"
 #export gdvroot="/home/gauss/gdvh13"
@@ -11,7 +12,7 @@ export gdvroot="/home/gauss/gdvh36"
 #export gdvroot="/home/gauss/gdvi02"
 #export gdvroot="/home/gauss/gdvi03p"
 #export gdvroot="/home/gauss/gdvi04p"
-source $gdvroot/gdv/bsd/gdv.profile
+#source $gdvroot/gdv/bsd/gdv.profile
 export GAUSS_SCRDIR="/home/GauScr"
 
 #G09
@@ -50,3 +51,5 @@ stty erase '^?'
 #set savehist = 10
 #history -L ~/.freqcmds
 
+. =(c2z -l)
+alias gdv=$gdvroot/gdv/gdv
