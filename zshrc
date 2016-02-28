@@ -4,12 +4,15 @@ PATH=/usr/local/git/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
+# use fuzzy logic cd-ing with 'z'
+source $HOME/.oh-my-zsh/plugins/z/z.sh
+
 # remap backspace
 stty erase '^?'
 # Source Medusa-specific environmental variables 
 #
 
-source $HOME/.medusa 
+#source $HOME/.medusa 
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -36,7 +39,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(osx zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
+plugins=(z battery osx zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
 
 source $ZSH/oh-my-zsh.sh
 
