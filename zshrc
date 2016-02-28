@@ -7,10 +7,12 @@ ZSH=$HOME/.oh-my-zsh
 # use fuzzy logic cd-ing with 'z'
 source $HOME/.oh-my-zsh/plugins/z/z.sh
 
+
 # remap backspace
 stty erase '^?'
-# Source Medusa-specific environmental variables 
-#
+
+# use local_config for remote machines
+source $HOME/.local_zshrc
 
 #source $HOME/.medusa 
 
