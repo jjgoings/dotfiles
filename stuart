@@ -10,7 +10,8 @@ export gdvroot=/home1/gaussian/gdv/H36
 . $gdvroot/gdv/bsd/gdv.profile
 # load .tcshrc and gdv.login so we can use GDV
 /home2/jjgoings/dotfiles/c2z -l > tmp
-source tmp
+# warning! won't tell you if you have an error!
+source tmp > /dev/null 2>&1
 rm -f tmp
 
 ## G09 Environment

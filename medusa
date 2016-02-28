@@ -13,7 +13,8 @@
 export gdvroot="/home/gauss/gdvi04p"
 source $gdvroot/gdv/bsd/gdv.profile
 export GAUSS_SCRDIR="/home/GauScr"
-. =(~/dotfiles/c2z -l)
+# redirect error to dev/null
+. =(~/dotfiles/c2z -l) > /dev/null 2>&1 
 
 #G09
 #export g09root="/home/gauss/g09"
