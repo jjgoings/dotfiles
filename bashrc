@@ -22,6 +22,9 @@ if [ -e /opt/local/bin/fortune ]; then
     echo " "
 fi
 
+# source local_bashrc, if it exists
+source $HOME/.local_bashrc
+
 ##############################################################################
 # 02. Aliases                                                                #
 ##############################################################################
