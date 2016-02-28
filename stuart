@@ -8,11 +8,29 @@ fi
 ## GDV Environment
 export gdvroot=/home1/gaussian/gdv/H36
 . $gdvroot/gdv/bsd/gdv.profile
+# load .tcshrc and gdv.login so we can use GDV
+/home2/jjgoings/dotfiles/c2z -l > tmp
+source tmp
+rm -f tmp
 
 ## G09 Environment
 export g09root=/home1/gaussian/g09/D01
 . $g09root/g09/bsd/g09.profile
 
+## PGI Envirnoment
+export PGI=/home1/gaussian/pgi
+export LM_LICENSE_FILE=/home1/gaussian/pgi/license.dat
+export PATH=/home1/gaussian/pgi/linux86-64/14.1/bin:$PATH
+export PATH=/home1/gaussian/bin/autoconf-2.69/bin:$PATH
+# -- GDV Environment ------------------------------------------------
+#export gdvroot "/home1/gaussian/gdv/H12P"
+export gdvroot="/home1/gaussian/gdv/H36"
+#export gdvroot "/home1/gaussian/gdv/I03"
+#export gdvroot "/home1/gaussian/gdv/I03p-linda"
+#export gdvroot "/home1/gaussian/gdv/I04p"
+source $gdvroot/gdv/bsd/gdv.profile
+export GAUSS_MEMDEF=1000MW
+export GAUSS_SCRDIR=/state/partition1
 ## SUBMTR Aliases
 alias submit='/home2/jjgoings/bin/submtr/submtr'
 alias linda='/home2/jjgoings/bin/submtr/submtr  -L'
@@ -29,6 +47,34 @@ export LD_LIBRARY_PATH=/opt/openmpi/lib:$LD_LIBRARY_PATH
 export orcaDIR=
 export PATH=$orcaDIR:/opt/openmpi/bin:$PATH
 alias orca='/orca'
+
+# -- Default Permissions for New Files/Folders ----------------------
+umask 027
+
+# -- Link to GCC 4.9.2 Environment ----------------------------------
+export PATH='/home1/gaussian/gcc/gcc-4.9.2/bin:'$PATH
+export LD_LIBRARY_PATH='/home1/gaussian/gcc/gcc-4.9.2/lib:/home1/gaussian/gcc/gcc-4.9.2/lib64:'$LD_LIBRARY_PATH
+export CPATH='/home1/gaussian/gcc/gcc-4.9.2/include:'$CPATH
+
+# -- Link to Boost 1.59.0 -------------------------------------------
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":/home1/gaussian/boost/1.59.0/stage-1_59_0/lib"
+#export CPATH=$CPATH":/home1/gaussian/boost/1.59.0/include"
+
+# -- Link to Eigen3 -------------------------------------------------
+#export CPATH=$CPATH":/home1/gaussian/eigen/eigen-eigen-c58038c56923"
+
+# -- Link to BTAS ---------------------------------------------------
+#export CPATH=$CPATH":/home1/gaussian/github/BTAS"
+
+# -- Add CMake to PATH ----------------------------------------------
+export PATH=$PATH':/home1/gaussian/github/CMake/bin'
+
+# -- Link to a local compilation of LAPACK --------------------------
+#export LD_LIBRARY_PATH $LD_LIBRARY_PATH":/home1/gaussian/lapack/lib"
+
+export HDF5_ROOT=/home1/gaussian/HDF5
+
+# EOF
 
 # Automatically add completion for all aliases to commands having completion functions
 function alias_completion {
