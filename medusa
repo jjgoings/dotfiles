@@ -34,6 +34,9 @@ export CUDA_HOME=/usr/local/cuda-7.5
 export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
 export LD_LIBRARY_PATH="/home/jjgoings/gcc-4.9.2/lib:/home/jjgoings/gcc-4.9.2/lib64:/usr/lib64:/usr/local/lib/:/usr/local/libint/2.1.0-beta/lib:/usr/local/cuda-7.0/lib64:"$LD_LIBRARY_PATH
 
+export LD_LIBRARY_PATH=/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
+
+
 #Paths for executables
 export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/14.1/bin:$PGI/linux86-64/14.1/mpi/mpich/bin:/opt/pgi/linux86-64/14.1/mpi2/mpich/bin:/opt/pgi/linux86-64/14.1/mpi/mvapich/bin:$PATH
 
