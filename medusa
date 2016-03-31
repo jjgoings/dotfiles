@@ -38,7 +38,7 @@ export LD_LIBRARY_PATH=/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
 
 
 #Paths for executables
-export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/14.1/bin:$PGI/linux86-64/14.1/mpi/mpich/bin:/opt/pgi/linux86-64/14.1/mpi2/mpich/bin:/opt/pgi/linux86-64/14.1/mpi/mvapich/bin:$PATH
+export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/16.1/bin:$PGI/linux86-64/16.1/mpi/mpich/bin:/opt/pgi/linux86-64/16.1/mpi2/mpich/bin:/opt/pgi/linux86-64/16.1/mpi/mvapich/bin:$PATH
 
 source ~/.alias
 #source /home/jjgoings/torch/install/bin/torch-activate
@@ -54,4 +54,3 @@ stty erase '^?'
 #set prompt = "[%n@%m:%~> "
 #set savehist = 10
 #history -L ~/.freqcmds
-
