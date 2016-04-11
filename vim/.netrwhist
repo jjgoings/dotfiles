@@ -1,9 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
-let g:netrw_dirhist_1='/home/jjgoings/dotfiles_old/.vim'
-let g:netrw_dirhist_2='/home/jjgoings/dotfiles/oh-my-zsh'
-let g:netrw_dirhist_3='/home/jjgoings/dotfiles/oh-my-zsh/themes'
-let g:netrw_dirhist_4='/home/jjgoings/.local'
-let g:netrw_dirhist_5='/home/jjgoings/chronusq/include'
-let g:netrw_dirhist_6='/home/jjgoings/bin/scripts'
-let g:netrw_dirhist_7='/home/jjgoings/l512_ECD'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/home/jjgoings/gstab/h3_GHF'
+let g:netrw_dirhist_2='/home/jjgoings/l512_i04p/other'
+let g:netrw_dirhist_3='/home/jjgoings/l512_i04p/memorytest'
+let g:netrw_dirhist_4='/home/jjgoings/rt-x2c/l512'
