@@ -5,18 +5,20 @@
 #export gdvroot="/home/gauss/gdvh28"
 #export gdvroot="/home/gauss/gdvh33m"
 #export gdvroot="/home/jjgoings/gdvh34"
-export gdvroot="/home/gauss/gdvh36"
+#export gdvroot="/home/gauss/gdvh36"
 #export gdvroot="/home/gauss/gdvh38p"
 #export gdvroot="/home/gauss/gdvi01p"
 #export gdvroot="/home/gauss/gdvi02"
 #export gdvroot="/home/gauss/gdvi03p"
-#export gdvroot="/home/gauss/gdvi04p"
+export gdvroot="/home/gauss/gdvi04p"
 source $gdvroot/gdv/bsd/gdv.profile
 export GAUSS_SCRDIR="/home/GauScr"
+# redirect error to dev/null
+. =(~/dotfiles/c2z -l) > /dev/null 2>&1 
 
 #G09
-export g09root="/home/gauss/g09"
-source $g09root/g09/bsd/g09.profile
+#export g09root="/home/gauss/g09"
+#source $g09root/g09/bsd/g09.profile
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -32,8 +34,11 @@ export CUDA_HOME=/usr/local/cuda-7.5
 export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
 export LD_LIBRARY_PATH="/home/jjgoings/gcc-4.9.2/lib:/home/jjgoings/gcc-4.9.2/lib64:/usr/lib64:/usr/local/lib/:/usr/local/libint/2.1.0-beta/lib:/usr/local/cuda-7.0/lib64:"$LD_LIBRARY_PATH
 
+export LD_LIBRARY_PATH=/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
+
+
 #Paths for executables
-export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/14.1/bin:$PGI/linux86-64/14.1/mpi/mpich/bin:/opt/pgi/linux86-64/14.1/mpi2/mpich/bin:/opt/pgi/linux86-64/14.1/mpi/mvapich/bin:$PATH
+export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/16.1/bin:$PGI/linux86-64/16.1/mpi/mpich/bin:/opt/pgi/linux86-64/16.1/mpi2/mpich/bin:/opt/pgi/linux86-64/16.1/mpi/mvapich/bin:$PATH
 
 source ~/.alias
 #source /home/jjgoings/torch/install/bin/torch-activate
@@ -49,4 +54,3 @@ stty erase '^?'
 #set prompt = "[%n@%m:%~> "
 #set savehist = 10
 #history -L ~/.freqcmds
-

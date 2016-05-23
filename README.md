@@ -32,3 +32,27 @@ git clone git://github.com/michaeljsmalley/dotfiles ~/dotfiles
 cd ~/dotfiles
 ./makesymlinks.sh
 ```
+
+Working with Gaussian DV
+-------------
+
+For whatever reason, GDV really only works with C-shell, despite the 
+`gdv.profile` file. A workaround to load `gdv` and the `mk` aliases is to use
+the `c2z` script in `/dotfiles/`. To use, source it in your `local_zshrc` file 
+(should work in bash too), like so
+``` bash
+. =(~/dotfiles/c2z -l)
+```
+As long as everything was set up correctly in your old .tcshrc, this should 
+set up most of the necessary gaussian specific environmental variables and 
+necessay aliases to do development work.
+
+`zshrc` will look for the `local_zshrc` on initialization, so put machine 
+specific aliases and environmental variables in there.
+
+It works by converting the sourced c-shell environmental variables, and
+converting the syntax to bourne-shell syntax, which then gets sourced when you
+login to zsh or bash. I've found it works for ~95% of the things, so some minor
+tweaks may be necessary depending on your machine configuration.
+
+

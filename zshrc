@@ -7,8 +7,6 @@ ZSH=$HOME/.oh-my-zsh
 # use fuzzy logic cd-ing with 'z'
 source $HOME/.oh-my-zsh/plugins/z/z.sh
 
-#latex path
-
 # remap backspace
 stty erase '^?'
 

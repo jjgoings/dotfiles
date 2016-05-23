@@ -22,6 +22,12 @@ if [ -e /opt/local/bin/fortune ]; then
     echo " "
 fi
 
+# source local_bashrc, if it exists
+source $HOME/.local_bashrc
+
+# use fuzzy logic cd-ing with 'z'                                               
+source $HOME/.oh-my-zsh/plugins/z/z.sh
+
 ##############################################################################
 # 02. Aliases                                                                #
 ##############################################################################
