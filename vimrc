@@ -21,7 +21,7 @@ set nocompatible         " get rid of Vi compatibility mode. SET FIRST!
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype plugin indent on " filetype detection[ON] plugin[ON] indent[ON]
+"filetype plugin indent on " filetype detection[ON] plugin[ON] indent[ON]
 
 " In Makefiles DO NOT use spaces instead of tabs
 autocmd FileType make setlocal noexpandtab
@@ -80,13 +80,14 @@ set visualbell
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "set autoindent            " auto-indent
 set tabstop=4             " tab spacing
-set softtabstop=2         " unify
-set shiftwidth=2          " indent/outdent by 2 columns
-set shiftround            " always indent/outdent to the nearest tabstop
+"set softtabstop=2         " unify
+"set shiftwidth=2          " indent/outdent by 2 columns
+"set shiftround            " always indent/outdent to the nearest tabstop
 set expandtab             " use spaces instead of tabs
 "set smartindent           " automatically insert one extra level of indentation
-set smarttab              " use tabs at the start of a line, spaces elsewhere
-set nowrap                " don't wrap text
+"set smarttab              " use tabs at the start of a line, spaces elsewhere
+"set nowrap                " don't wrap text
+set textwidth=80
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 06. Custom Commands                                                        "
