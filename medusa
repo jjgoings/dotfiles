@@ -13,7 +13,8 @@
 #export gdvroot="/home/gauss/gdvi04p"
 export gdvroot="/home/gauss/gdvi06p"
 source $gdvroot/gdv/bsd/gdv.profile
-export GAUSS_SCRDIR="/home/jjgoings/GauScr"
+export GAUSS_SCRDIR="/home/GauScr"
+export PSI_SCRATCH="/home/GauScr"
 # redirect error to dev/null
 . =(~/dotfiles/c2z -l) > /dev/null 2>&1 
 
@@ -24,11 +25,10 @@ export GAUSS_SCRDIR="/home/jjgoings/GauScr"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-
-##PGI compiler env
-#export PGI=/opt/pgi
-#export MANPATH="$PGI/linux86-64/2014/man:$PGI/linux86-64/2014/mpi/mpich/man:$PGI/linux86-64/2014/mpi2/mpich/share/man::$PGI/linux86-64/2014/mpi/mvapich/man"
-#export LM_LICENSE_FILE=$PGI/license.dat
+#PGI compiler env
+export PGI=/opt/pgi
+export MANPATH="$PGI/linux86-64/16.4/man"
+export LM_LICENSE_FILE=$PGI/license.dat
 #
 ##CUDA env
 #export CUDA_HOME=/usr/local/cuda-7.5 
@@ -41,13 +41,13 @@ export LANG=en_US.UTF-8
 ##Paths for executables
 #export PATH=/usr/local/cuda-5.5/bin:/home/jjgoings/gcc-4.9.2/bin:/sbin:/usr/sbin:/home/jjgoings/bin:/usr/bin:/usr/local/cuda-5.0/bin:$PGI/linux86-64/16.1/bin:$PGI/linux86-64/16.1/mpi/mpich/bin:/opt/pgi/linux86-64/16.1/mpi2/mpich/bin:/opt/pgi/linux86-64/16.1/mpi/mvapich/bin:$PATH
 #
-#source ~/.alias
+source ~/.alias
 ##source /home/jjgoings/torch/install/bin/torch-activate
 #
 #export PSI_SCRATCH=/home/jjgoings/SCRATCH
-#export PSI=/home/jjgoings/psi4public
-#export PSIDATADIR=/home/jjgoings/psi4public/lib
-#export PATH=$PATH:$PSI/bin
+export PSI=/home/jjgoings/psi4
+export PSIDATADIR=/home/jjgoings/psi4/share
+export PATH=$PSI/objdir/bin:$PATH
 
 stty erase '^?'
 

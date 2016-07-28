@@ -51,6 +51,9 @@ augroup markdown
   au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
 augroup END
 
+" PSI4 files *.dat as with Python syntax
+au BufReadPost *.dat set syntax=python
+
 " Highlight characters that go over 80 columns (by drawing a border on the 81st)
 if exists('+colorcolumn')
   set colorcolumn=81
