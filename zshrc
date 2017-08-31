@@ -55,8 +55,6 @@ fi
 
 # Shell Aliases
 
-## Miscellaneous Aliases
-alias htop='sudo htop'
 
 # Shell Functions
 # qfind - used to quickly find files that contain a string in a directory
