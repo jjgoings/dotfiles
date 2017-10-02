@@ -1,0 +1,833 @@
+############################################################################
+#cr                                                                       
+#cr            (C) Copyright 1995-2007 The Board of Trustees of the            
+#cr                        University of Illinois                         
+#cr                         All Rights Reserved                           
+#cr                                                                       
+############################################################################
+
+############################################################################
+# RCS INFORMATION:
+#
+#       $RCSfile: .vmdrc,v $
+#       $Author: johns $        $Locker:  $                $State: Exp $
+#       $Revision: 1.9 $      $Date: 2007/01/12 20:12:44 $
+#
+############################################################################
+# DESCRIPTION:
+#
+# VMD startup script.  The commands here are executed as soon as VMD starts up
+############################################################################
+
+# turn on lights 0 and 1
+light 0 on
+light 1 on
+light 2 off
+light 3 off
+
+# position the stage and axes
+axes location lowerleft
+stage location off
+
+# position and turn on menus
+menu main     move 5   225
+menu display  move 395 30
+menu graphics move 395 500
+menu color    move 125 225
+menu files    move 125 325
+menu labels   move 125 525
+menu render   move 125 525
+
+menu main      on
+#menu display  on
+#menu graphics on
+#menu color    on
+#menu labels   on
+#menu render   on
+#menu files    on
+
+# Turn on ambient occlusion and shadows
+menu display shadows on
+menu display ambientocclusion on
+menu display update
+
+# start the scene a-rockin'
+# rock y by 1
+
+# User's default values for newly loaded molecules/reps, etc
+#  mol default color {colorID 5}
+#  mol default style {NewCartoon 0.300000 6.000000 4.100000 0}
+#  mol default selection {name CA}
+#  mol default material {Transparent}
+
+mol default style 
+#mol default style {NewCartoon 0.300000 6.000000 4.100000 0}
+
+#after idle {
+# change default rep for already loaded molecules
+#  mol representation {CPK 0.100000 0.100000 20.000000 20.000000}
+#  mol representation {CPK 1.000000 0.300000 20.000000 20.000000}
+#  foreach mid [molinfo list] {
+#    mol delrep 0 $mid
+#    mol addrep $mid
+#  }
+#} 
+
+proc chigh {molid} {
+     display projection Orthographic
+     mol modselect 0 $molid resid 1 and (name \"CO.*\" or name \"Co.*\" or name \"O.*\")
+     mol modstyle 0 $molid DynamicBonds 2.200000 0.100000 31.000000
+     mol color Name
+     mol representation DynamicBonds 2.200000 0.100000 31.000000
+     mol selection resid 1 and (name \"CO.*\" or name \"Co.*\" or name \"O.*\")
+     mol material Opaque
+     mol addrep $molid
+     mol modselect 1 $molid resid 1
+     mol modstyle 1 $molid VDW 0.200000 33.000000
+     mol color Name
+     mol representation DynamicBonds 2.200000 0.100000 31.000000
+     mol selection resid 1 and (name \"CO.*\" or name \"Co.*\" or name \"O.*\")
+     mol material Opaque
+     mol addrep $molid
+     mol modstyle 2 $molid DynamicBonds 1.200000 0.100000 31.000000
+     mol modselect 2 $molid resid 1 and (name \"H.*\" or name \"O.*\")
+     mol color Name
+     mol representation VDW 0.200000 33.000000
+     mol selection resid 1
+     mol material Opaque
+     mol addrep $molid
+     mol modstyle 3 $molid DynamicBonds 1.200000 0.100000 31.000000
+     mol modselect 3 $molid same resid as (within 2.4 of resid 1)
+     mol selupdate 3 $molid 1
+}
+
+proc dbonds {molid} {
+     color Labels Atoms black
+     color Labels Bonds black
+     color Labels Angles black
+     color Labels Dihedrals black
+     color Name C silver
+     display projection Orthographic
+     axes location Off
+     color Display Background white
+     #display resize 600 600
+     display depthcue off
+     display nearclip set 0.010000
+     mol modselect 0 $molid not name \"H.*\"
+     mol modstyle 0 $molid DynamicBonds 1.800000 0.150000 21.000000
+     mol addrep $molid
+     mol modselect 1 $molid all
+     mol modstyle 1 $molid DynamicBonds 1.200000 0.150000 21.000000
+
+     mol addrep $molid
+     mol modstyle 2 $molid VDW 0.250000 27.000000
+     mol modmaterial 0 $molid Diffuse
+     mol modmaterial 1 $molid Diffuse
+     mol modmaterial 2 $molid Diffuse
+     material change ambient Diffuse 0.130000
+
+}
+
+proc dcat {molid} {
+     display backgroundgradient off
+     color Labels Atoms black
+     color Labels Bonds black
+     color Labels Angles black
+     color Labels Dihedrals black
+     color Name C silver
+     color Name O pink
+     color change rgb 2 0.500000 0.500000 0.500000
+     color change rgb 9 1.000000 0.400000 0.400000
+     color change rgb 31 1.000000 0.750000 0.200000
+     #display projection Orthographic
+     display projection Perspective
+     display height 2.000000
+     axes location Off
+     color Display Background white
+     #display resize 600 600
+     display depthcue off
+     display nearclip set 0.010000
+
+     mol modselect 0 $molid name Fe N
+     mol modstyle 0 $molid DynamicBonds 2.800000 0.100000 21.000000
+
+     mol addrep $molid
+     mol modselect 1 $molid not name \"H.*\"
+     mol modstyle 1 $molid DynamicBonds 2.100000 0.100000 21.000000
+
+     mol addrep $molid
+     mol modselect 2 $molid all
+     mol modstyle 2 $molid DynamicBonds 1.500000 0.100000 21.000000
+
+     mol addrep $molid
+     mol modselect 3 $molid name Fe N
+     mol modstyle 3 $molid VDW 0.20000 27.000000
+
+     mol addrep $molid
+     mol modselect 4 $molid not name Fe
+     mol modstyle 4 $molid VDW 0.15000 27.000000
+
+     mol addrep $molid
+     mol modselect 5 $molid name Fe or (name \"H.*\" and within 1.8 of name Fe)
+     mol modstyle 5 $molid DynamicBonds 1.800000 0.100000 21.000000
+
+     mol modmaterial 0 $molid Diffuse
+     mol modmaterial 1 $molid Diffuse
+     mol modmaterial 2 $molid Diffuse
+     mol modmaterial 3 $molid HardPlastic
+     mol modmaterial 4 $molid Diffuse
+     material change ambient Diffuse 0.130000
+     material change ambient HardPlastic 0.200000
+     material change diffuse HardPlastic 0.650000
+     material change specular HardPlastic 0.600000
+     material change shininess HardPlastic 0.600000
+
+     display resetview
+     
+     scale by 0.5
+     display ambientocclusion on
+     display aoambient 0.810000
+     display aoambient 0.800000
+     display aodirect 0.410000
+     display aodirect 0.400000
+
+     color Name F orange2
+}
+
+proc align {args} {
+    set nf [molinfo top get numframes]
+    set all [atomselect top all]
+    set sel [atomselect top $args]
+    set frame0 [atomselect top $args frame 0]
+    #set frame0 [atomselect top all frame 0]
+    puts "Aligning..."
+    for { set i 1 } { $i <= $nf } { incr i } {
+        if { ($i > 0) && ($i%10000 == 0) } {
+            puts "Frame $i/$nf"
+        }
+        $all frame $i
+        $sel frame $i
+        $all move [measure fit $sel $frame0]
+    }
+    display resetview
+}
+
+proc fig3 {molid} {
+     display projection Orthographic
+     axes location Off
+     color Display Background white
+     display resize 800 800
+     display depthcue off
+     display nearclip set 0.010000
+     mol modselect 0 $molid not name \"H.*\"
+     mol modstyle 0 $molid DynamicBonds 1.800000 0.150000 21.000000
+     mol addrep $molid
+     mol modselect 1 $molid all
+     mol modstyle 1 $molid DynamicBonds 1.200000 0.150000 21.000000
+     mol addrep $molid
+     mol modstyle 2 $molid VDW 0.250000 27.000000
+}
+
+
+proc rhigh {molid} {
+     display projection Orthographic
+     mol modselect 0 $molid resid 1 and (name \"RU.*\" or name \"Ru.*\" or name \"N.*\")
+     mol modstyle 0 $molid DynamicBonds 2.200000 0.100000 31.000000
+     mol color Name
+     mol representation DynamicBonds 2.200000 0.100000 31.000000
+     mol selection resid 1 and (name \"RU.*\" or name \"Ru.*\" or name \"N.*\")
+     mol material Opaque
+     mol addrep $molid
+     mol modselect 1 $molid resid 1
+     mol modstyle 1 $molid VDW 0.200000 33.000000
+     mol color Name
+     mol representation DynamicBonds 2.200000 0.100000 31.000000
+     mol selection resid 1 and (name \"RU.*\" or name \"Ru.*\" or name \"N.*\")
+     mol material Opaque
+     mol addrep $molid
+     mol modstyle 2 $molid DynamicBonds 1.500000 0.100000 31.000000
+     mol modselect 2 $molid resid 1 and (name \"H.*\" or name \"C.*\"or name \"N.*\")
+     mol color Name
+     mol representation VDW 0.200000 33.000000
+     mol selection resid 1
+     mol material Opaque
+     mol addrep $molid
+     mol modstyle 3 $molid DynamicBonds 1.200000 0.100000 31.000000
+     mol modselect 3 $molid same resid as (within 2.4 of resid 1)
+     mol selupdate 3 $molid 1
+}
+
+proc min {x y} {expr {$x<$y? $x: $y}}
+
+proc vmd_draw_vector {mol cnt vec {scale 1.0} {res 35} {radius 0.05}} {
+    set vechalf [vecscale [expr $scale *0.5] $vec]
+    set veczero [vecscale [expr $scale *0.0] $vec]
+    set vecfull [vecscale [expr $scale *1.0] $vec]
+    set radius [min [expr 0.1 * [veclength $vec]] $radius]
+    return [list \
+      [graphics $mol cylinder [vecsub $cnt $veczero] \
+        [vecadd $cnt [vecscale 0.8 $vecfull]] \
+        radius $radius resolution $res filled yes] \
+      [graphics $mol cone [vecadd $cnt [vecscale 0.8 $vecfull]] \
+       [vecadd $cnt $vecfull] radius [expr $radius * 1.7] \
+    resolution $res]]
+}
+
+proc vmd_draw_vecfield {mol field {scale 1.0} {res 35} {radius 0.05}} {
+    set gids ""
+    foreach i $field {
+        lassign $i cnt vec
+        append gids " " [vmd_draw_vector $mol $cnt $vec $scale $res $radius]
+    }
+    return $gids
+}
+
+proc do_frcdraw {args} {
+    # frcdata has the center and the direction/lenght of the vector
+    # frcgraph has the indices of the vector graphic elements
+    global frcdata frcgraph
+    set molid 0
+    set na [molinfo 0 get numatoms]
+    set frame [molinfo $molid get frame]
+    if {[info exists frcdata($frame)]} then {
+    if {[info exists frcgraph]} then {
+        foreach g $frcgraph {
+        graphics $molid delete $g
+        }
+    }
+    draw material Transparent
+    graphics $molid color yellow
+    set frcgraph [vmd_draw_vecfield $molid $frcdata($frame) 1.0 35 0.05]
+    }
+}
+
+proc do_frcdraw2 {args} {
+    # frcdata has the center and the direction/lenght of the vector
+    # frcgraph has the indices of the vector graphic elements
+    global frcdata frcdata2 frcgraph frcgraph2
+    set molid 0
+    set na [molinfo 0 get numatoms]
+    set frame [molinfo $molid get frame]
+    if {[info exists frcdata($frame)]} then {
+    if {[info exists frcgraph]} then {
+        foreach g $frcgraph {
+        graphics $molid delete $g
+        }
+    }
+    draw material Transparent
+    graphics $molid color orange3
+    set frcgraph [vmd_draw_vecfield $molid $frcdata($frame) 2.5 35 1.0]
+    }
+
+    if {[info exists frcdata2($frame)]} then {
+    if {[info exists frcgraph2]} then {
+        foreach g $frcgraph2 {
+        graphics $molid delete $g
+        }
+    }
+    draw material Transparent
+    graphics $molid color blue2
+    set frcgraph2 [vmd_draw_vecfield $molid $frcdata2($frame) 2.5 35 1.0]
+    }
+}
+
+proc load_frc {args} {
+    lassign $args fnm
+    set viewpoints {}
+    set mol [molinfo top]
+    # save orientation and zoom parameters
+    set viewpoints [molinfo $mol get {
+    center_matrix rotate_matrix scale_matrix global_matrix}]
+
+    mol load xyz $fnm
+    mol off [molinfo top]
+
+    mol top $mol
+    molinfo $mol set {center_matrix rotate_matrix \
+              scale_matrix global_matrix} $viewpoints
+}
+
+#proc plot_cube {args} {
+#    lassign $args fnm
+#    set viewpoints {}
+#    set mol [molinfo top]
+#    # save orientation and zoom parameters
+#    set viewpoints [molinfo $mol get {
+#    center_matrix rotate_matrix scale_matrix global_matrix}]
+#
+#    mol load cube $fnm
+#    mol off [molinfo top]
+#
+#    mol top $mol
+#    molinfo $mol set {center_matrix rotate_matrix \
+#              scale_matrix global_matrix} $viewpoints
+#}
+
+proc draw_frc {args} {
+# Somehow this doesn't work either.
+# To use this, first run "load_frc force.xyz"
+# Then run "play draw-forces.tcl"
+    set n [molinfo 0 get numframes]
+    set na [molinfo 0 get numatoms]
+    for {set i 0} {$i < $n} {incr i} {
+    set frcframe ""
+    for {set j 0} {$j < $na} {incr j} {
+        set sel [atomselect 0 "index $j"]
+        set self [atomselect 1 "index $j"]
+        $sel frame $i
+        $sel update
+        $self frame $i
+        $self update
+        set x [$sel get x]
+        set y [$sel get y]
+        set z [$sel get z]
+        set fx [$self get x]
+        set fy [$self get y]
+        set fz [$self get z]
+        append frcframe " " [list [list [list $x $y $z] [list $fx $fy $fz]]]
+    }
+    set frcdata($i) $frcframe
+    }
+    set molid 0
+    # connect to vmd_frame
+    trace variable vmd_frame(0) w do_frcdraw
+    animate goto 0
+}
+
+# Currently this does not work for some strange reason.
+proc draw-forces1 {args} {
+    global frcdata
+    lassign $args fnm
+    set viewpoints {}
+    set mol [molinfo top]
+    # save orientation and zoom parameters
+    set viewpoints [molinfo $mol get {
+    center_matrix rotate_matrix scale_matrix global_matrix}]
+
+    mol load xyz $fnm
+
+    set fmol [molinfo top]
+
+    mol top $mol
+    molinfo $mol set {center_matrix rotate_matrix \
+              scale_matrix global_matrix} $viewpoints
+
+    set n [molinfo $mol get numframes]
+    set na [molinfo $mol get numatoms]
+    for {set i 0} {$i < $n} {incr i} {
+    set frcframe ""
+    for {set j 0} {$j < $na} {incr j} {
+        set sel [atomselect $mol "index $j"]
+        set self [atomselect $fmol "index $j"]
+        $sel frame $i
+        $sel update
+        $self frame $i
+        $self update
+        set x [$sel get x]
+        set y [$sel get y]
+        set z [$sel get z]
+        set fx [$self get x]
+        set fy [$self get y]
+        set fz [$self get z]
+        append frcframe " " [list [list [list $x $y $z] [list $fx $fy $fz]]]
+    }
+    set frcdata($i) $frcframe
+    }
+    trace variable vmd_frame(0) w do_frcdraw
+    animate goto 0
+}
+
+# Lee-Ping's scripts for manipulating orbitals.
+#  a) vmd -molden molden.molf
+#  b) orbview 0 0.06 (molid, isovalue)
+#  c) orbiso 0 0.05 (adjust isovalue as needed)
+#  d) orbnum 0 120 (view orbitals if needed)
+#  e) orbspn 0 0 (molid, 0-alpha or 1-beta)
+#  f) orbrender 0 115 126 (plot orbitals)
+
+proc orbview { molid isoval } {
+    # Call this function with the Molden file already loaded into molid.
+    # It will bring up all the orbital isosurfaces at the specified isoval.
+    axes location Off
+    display rendermode GLSL
+    display depthcue off
+    mol delrep 1 $molid
+    mol delrep 1 $molid
+    mol modstyle 0 $molid Licorice 0.100000 10.000000 10.000000
+    mol color Name
+    mol representation Licorice 0.100000 10.000000 10.000000
+    mol selection all
+    mol material Opaque
+    mol addrep $molid
+    mol modmaterial 1 $molid Opaque
+    mol modcolor 1 $molid ColorID 23
+    # Number after $isoval is the orbital number, starting from 1
+    # 0.075 is the grid spacing
+    # Third to last number is alpha(0)/beta(1)
+    mol modstyle 1 $molid Orbital $isoval 1 0 0 0.075 1 6 0 0 1
+    # mol modstyle 1 $molid Isosurface $isoval 0.000000 0.000000 0.000000 1 1
+    mol color ColorID 23
+    mol representation Orbital $isoval 1 0 0 0.075 1 6 0 0 1
+    # mol representation Isosurface $isoval 0.000000 0.000000 0.000000 1 1
+    mol selection all
+    mol material Opaque
+    mol addrep $molid
+    mol modmaterial 2 $molid Opaque
+    mol modcolor 2 $molid ColorID 30
+    mol modstyle 2 $molid Orbital -$isoval 1 0 0 0.075 1 6 0 0 1
+    # mol modstyle 2 $molid Isosurface -$isoval 0.000000 0.000000 0.000000 1 1
+    color Display Background white
+    display projection Perspective
+    display height 2.0
+}
+
+proc orbnum { molid orbnumber } {
+    # Call this function to switch orbitals; 0 is the first orbital, followed by 1, etc.
+    set currisoval [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 1 ]
+    set currspin [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 8 ]
+    set nisoval [ expr -1*$currisoval ]
+    mol modstyle 2 $molid Orbital $nisoval $orbnumber 0 0 0.075 1 6 $currspin 0 1
+    mol modstyle 1 $molid Orbital $currisoval $orbnumber 0 0 0.075 1 6 $currspin 0 1
+    # mol modstyle 2 $molid Isosurface $nisoval $orbnumber 0.000000 0.000000 1 1
+    # mol modstyle 1 $molid Isosurface $currisoval $orbnumber 0.000000 0.000000 1 1
+}
+
+proc orbiso { molid isovalue } {
+    # Call this function to switch the isovalue.
+    set currorb [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 2 ]
+    set currspin [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 8 ]
+    set nisoval [ expr -1*$isovalue ]
+    mol modstyle 2 $molid Orbital $nisoval $currorb 0 0 0.075 1 6 $currspin 0 1
+    mol modstyle 1 $molid Orbital $isovalue $currorb 0 0 0.075 1 6 $currspin 0 1
+    # mol modstyle 2 $molid Isosurface $nisoval $currorb 0.000000 0.000000 1 1
+    # mol modstyle 1 $molid Isosurface $isovalue $currorb 0.000000 0.000000 1 1
+}
+
+proc orbspn { molid spinvalue } {
+    # Call this function to switch the spin from alpha to beta.
+    if { $spinvalue != 0 && $spinvalue != 1 } { puts "Argument to orbspn is 0 (alpha) or 1 (beta)" ; return }
+    set currorb [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 2 ]
+    set currisoval [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 1 ]
+    set nisoval [ expr -1*$currisoval ]
+    mol modstyle 2 $molid Orbital $nisoval $currorb 0 0 0.075 1 6 $spinvalue 0 1
+    mol modstyle 1 $molid Orbital $currisoval $currorb 0 0 0.075 1 6 $spinvalue 0 1
+}
+
+proc orbrender { molid orbmin orbmax } {
+    # Call this function to render the orbitals in the range orbmin-orbmax, 
+    # inclusive, for the current spin and isovalue.
+    set currspin [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 8 ]
+    if { $currspin == 0 } { set spin "alpha" }
+    if { $currspin == 1 } { set spin "beta" }
+    for {set i $orbmin} {$i <= $orbmax} {incr i} {
+        set destfile [format {%s/%s%i.tga} [pwd] $spin $i]
+        puts $destfile 
+    orbnum $molid $i
+        render TachyonInternal $destfile
+    }
+}
+
+proc isoview { molid isoval } {
+    # Call this function with the cube file already loaded into molid.
+    # It will bring up all the orbital isosurfaces at the specified isoval.
+    axes location Off
+    display rendermode GLSL
+    mol delrep 1 $molid
+    mol delrep 1 $molid
+    mol modstyle 0 $molid Licorice 0.100000 10.000000 10.000000
+    mol color Name
+    mol representation Licorice 0.100000 10.000000 10.000000
+    mol selection all
+    mol material Opaque
+    mol addrep $molid
+    mol modmaterial 1 $molid Opaque
+    mol modcolor 1 $molid ColorID 23
+    mol modstyle 1 $molid Isosurface $isoval 0.000000 0.000000 0.000000 1 1
+    mol color ColorID 23
+    mol representation Isosurface $isoval 0.000000 0.000000 0.000000 1 1
+    mol selection all
+    mol material Opaque
+    mol addrep $molid
+    mol modmaterial 2 $molid Opaque
+    mol modcolor 2 $molid ColorID 30
+    mol modstyle 2 $molid Isosurface -$isoval 0.000000 0.000000 0.000000 1 1
+    color Display Background white
+}
+
+proc isonum { molid orbnumber } {
+    # Call this function to switch orbitals; 0 is the first orbital, followed by 1, etc.
+    set currisoval [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 1 ]
+    set nisoval [ expr -1*$currisoval ]
+    mol modstyle 2 $molid Isosurface $nisoval $orbnumber 0.000000 0.000000 1 1
+    mol modstyle 1 $molid Isosurface $currisoval $orbnumber 0.000000 0.000000 1 1
+}
+
+proc isoval { molid isovalue } {
+    # Call this function to switch the isovalue.
+    set orbnum [ lindex [ split [ molinfo $molid get "{rep 1}" ]  ] 2 ]
+    set nisoval [ expr -1*$isovalue ]
+    mol modstyle 2 $molid Isosurface $nisoval $orbnum 0.000000 0.000000 1 1
+    mol modstyle 1 $molid Isosurface $isovalue $orbnum 0.000000 0.000000 1 1
+}
+
+#=================#
+#| Begin sscache |#
+#=================#
+
+# Cache secondary structure information for a given molecule
+#VMD  --- start of VMD description block
+#Name:
+# SSCache
+#Synopsis:
+# Automatically stores secondary structure information for animations
+#Version:
+# 1.0
+#Uses VMD version:
+# 1.1
+#Ease of use:
+# 2
+#Procedures:
+# <li>start_sscache molid - start caching the given molecule
+# <li>stop_sscache molid - stop caching
+# <li>reset_sscache - reset the cache
+# <li>sscache - internal function used by trace
+#Description:
+# Calculates and stores the secondary structure assignment for 
+# each timestep.  This lets you see how the secondary structure
+# changes over a trajectory.
+# <p>
+# It is turned on with the command "start_sscache> followed by the
+# molecule number of the molecule whose secondary structure should be
+# saved (the default is "top", which gets converted to the correct
+# molecule index).  Whenever the frame for that molecule changes, the
+# procedure "sscache" is called.
+# <p>
+#   "sscache" is the heart of the script.  It checks if a secondary
+# structure definition for the given molecule number and frame already
+# exists in the Tcl array sscache_data(molecule,frame).  If so, it uses
+# the data to redefine the "structure" keyword values (but only for
+# the protein residues).  If not, it calls the secondary structure
+# routine to evaluate the secondary structure based on the new
+# coordinates.  The results are saved in the sscache_data array.
+# <p>
+# Once the secondary structure values are saved, the molecule can be
+# animated rather quickly and the updates can be controlled by the
+# animate form.
+# <p>
+#  To turn off the trace, use the command "stop_sscache", which
+# also takes the molecule number.  There must be one "stop_sscache"
+# for each "start_sscache".  The command "clear_sscache" resets
+# the saved secondary structure data for all the molecules and all the
+# frames.
+#Files: 
+# <a href="sscache.vmd">sscache.vmd</a>
+#See also:
+# the VMD user's guide
+#Author: 
+# Andrew Dalke &lt;dalke@ks.uiuc.edu&gt;
+#Url: 
+# http://www.ks.uiuc.edu/Research/vmd/script_library/sscache/
+#\VMD  --- end of block
+
+
+# start the cache for a given molecule
+proc start_sscache {{molid top}} {
+    global sscache_data
+    if {! [string compare $molid top]} {
+    set molid [molinfo top]
+    }
+    global vmd_frame
+    # set a trace to detect when an animation frame changes
+    trace variable vmd_frame($molid) w sscache
+    return
+}
+
+# remove the trace (need one stop for every start)
+proc stop_sscache {{molid top}} {
+    if {! [string compare $molid top]} {
+    set molid [molinfo top]
+    }
+    global vmd_frame
+    trace vdelete vmd_frame($molid) w sscache
+    return
+}
+
+
+# reset the whole secondary structure data cache
+proc reset_sscache {} {
+    global sscache_data
+    if [info exists sscache_data] {
+        unset sscache_data
+    }
+    return
+}
+
+# when the frame changes, trace calls this function
+proc sscache {name index op} {
+    # name == vmd_frame
+    # index == molecule id of the newly changed frame
+    # op == w
+    
+    global sscache_data
+
+    # get the protein CA atoms
+    set sel [atomselect $index "protein name CA"]
+
+    ## get the new frame number
+    # Tcl doesn't yet have it, but VMD does ...
+    set frame [molinfo $index get frame]
+
+    # see if the ss data exists in the cache
+    if [info exists sscache_data($index,$frame)] {
+    $sel set structure $sscache_data($index,$frame)
+    return
+    }
+
+    # doesn't exist, so (re)calculate it
+    vmd_calculate_structure $index
+    # save the data for next time
+    set sscache_data($index,$frame) [$sel get structure]
+
+    return
+}
+
+#proc sscache_loop {{molid top}} {
+#    if {! [string compare $molid top]} {
+#    set molid [molinfo top]
+#    }
+#    set nf [molinfo $molid get numframes]
+#    puts "numframes = $nf"
+#    for {set i 0} {$i < $nf} {incr i} { 
+#    sscache $i $molid w
+#    }
+#}
+
+# Instead I need to: 
+# 1) Loop over the frames and run sscache 
+
+#=================#
+#|  End sscache  |#
+#=================#
+
+# No teal carbons
+color Name C silver
+
+display backgroundgradient on
+color Display BackgroundTop blue3
+color Display BackgroundBot gray
+color change rgb 24  0.200000 0.240000 0.480000
+color change rgb 2  0.240000 0.240000 0.240000
+display projection Orthographic
+axes location Off
+
+proc ss {molid} {
+     display projection Orthographic
+     display depthcue off
+     display nearclip set 0.010000
+     mol modstyle 0 $molid NewCartoon
+     mol modcolor 0 $molid Structure
+     start_sscache
+     axes location Off
+     set sel [atomselect top "protein"]
+     # pbc wrap -all -centersel "segid P1" -center com -compound fragment
+     # rmsdtt::align $sel 0 $sel
+     # align protein
+}
+
+# First load AMBER prmtop/inpcrd as follows:
+# vmd -parm7 1.parm7 -rst7 1.rst7
+# Then type in "chglabel 0"
+proc chglbl {molid} {
+   # color Display Background gray
+   mol modstyle 0 $molid Licorice 0.100000 20.000000 20.000000
+   mol modcolor 0 $molid Charge
+   set sel [atomselect $molid all] 
+   set offset {0.0 0.3 0.3} 
+   graphics $molid color white 
+   foreach pos [$sel get {x y z}] q [$sel get charge] { 
+        set txt [format "%05.3f" $q] 
+        graphics $molid text [vecadd $offset $pos] $txt size 1.0
+   } 
+}
+
+proc pbcwrap {args} {
+    pbc wrap
+}
+
+proc pvdf {args} {
+    mol modselect 0 0 water
+    mol modstyle 0 0 QuickSurf 1.000000 0.500000 1.000000 3.000000
+    mol modcolor 0 0 ColorID 22
+    axes location Off
+    display backgroundgradient on
+    display depthcue off
+    display distance -3.000000
+    display nearclip set 0.010000
+    
+    mol color ColorID 22
+    mol representation QuickSurf 1.000000 0.500000 1.000000 3.000000
+    mol selection water
+    mol material Opaque
+    mol addrep 0
+    mol modselect 1 0 resname GPH
+    mol modstyle 1 0 DynamicBonds 1.600000 0.600000 17.000000
+    mol modcolor 1 0 Name
+    mol addrep 0
+    mol modselect 2 0 resname PVD
+    mol modstyle 2 0 VDW 1.000000 12.000000
+    mol modcolor 2 0 Name
+    mol modmaterial 0 0 Transparent
+    mol modmaterial 1 0 Diffuse
+    mol modmaterial 2 0 Diffuse
+    # VMD for LINUXAMD64, version 1.9.3beta4 (October 28, 2016)
+    # end of log file.
+}
+
+proc remove_long_bonds { max_length } { 
+    for { set i 0 } { $i < [ molinfo top get numatoms ] } { incr i } { 
+        set bead [ atomselect top "index $i" ] 
+        set bonds [ lindex [$bead getbonds] 0 ] 
+        if { [ llength bonds ] > 0 } { 
+            set bonds_new {} 
+            set xyz [ lindex [$bead get {x y z}] 0 ] 
+            foreach j $bonds { 
+                set bead_to [ atomselect top "index $j" ] 
+                set xyz_to [ lindex [$bead_to get {x y z}] 0 ] 
+                if { [ vecdist $xyz $xyz_to ] < $max_length } { 
+                    lappend bonds_new $j 
+                } 
+            } 
+            $bead setbonds [ list $bonds_new ] 
+        } 
+        unset bead
+        unset bonds
+        unset bonds_new
+        unset xyz
+        unset bead_to
+        unset xyz_to
+    } 
+} 
+
+proc pro {args} {
+    display backgroundgradient off
+    mol modstyle 0 0 NewCartoon 0.300000 10.000000 4.100000 0
+    display projection Orthographic
+    display depthcue off
+    display nearclip set 0.010000
+    mol modstyle 0 0 NewCartoon
+    axes location Off
+    mol modcolor 0 0 Index
+    color Display Background white
+    color scale method BGR
+}
+    
+animate goto 0
+# trace variable vmd_frame(0) w pbcwrap
+
+# If the file name matches reaction_*, then turn on dbonds.
+# if [ string match "reaction_*" [ molinfo top get filename ] ] {
+#    dbonds 0
+# }
+
+# dbonds 0
+# dcat 0
