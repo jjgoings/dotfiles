@@ -51,6 +51,15 @@ menu display shadows on
 menu display ambientocclusion on
 menu display update
 
+# Desaturate colors
+color change rgb  0 0.1 0.2 0.7 ;# blue
+color change rgb  1 0.7 0.2 0.1 ;# red
+color change rgb  3 0.7 0.4 0.0 ;# orange
+color change rgb  4 0.8 0.7 0.1 ;# yellow
+color change rgb  7 0.1 0.7 0.2 ;# green
+color change rgb 10 0.1 0.7 0.8 ;# cyan
+color change rgb 11 0.6 0.1 0.6 ;# purple
+
 # start the scene a-rockin'
 # rock y by 1
 

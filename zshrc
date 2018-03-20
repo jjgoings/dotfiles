@@ -4,6 +4,9 @@ PATH=/usr/local/git/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
+# scp bash-like globbing
+setopt nonomatch
+
 # use fuzzy logic cd-ing with 'z'
 source $HOME/.oh-my-zsh/plugins/z/z.sh
 
