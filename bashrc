@@ -42,6 +42,7 @@ bind '"\e[D": backward-char'
 set show-all-if-ambiguous on
 set completion-ignore-case on
 
+##############################################################################
 # 02. Aliases                                                                #
 ##############################################################################
 # Enable colors in "ls" command output
