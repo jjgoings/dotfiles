@@ -31,6 +31,7 @@ source $HOME/.local_bashrc
 # use fuzzy logic cd-ing with 'z'                                               
 source $HOME/.oh-my-zsh/plugins/z/z.sh
 
+# history search self-completion
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000000
 
@@ -41,7 +42,6 @@ bind '"\e[D": backward-char'
 set show-all-if-ambiguous on
 set completion-ignore-case on
 
-###############################################################################
 # 02. Aliases                                                                #
 ##############################################################################
 # Enable colors in "ls" command output
