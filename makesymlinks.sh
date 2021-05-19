@@ -30,6 +30,13 @@ for file in $files; do
     ln -s $dir/$file ~/.$file
 done
 
+# make matplotlibrc in .matplotlib
+echo "Moving .matplotlib from ~ to $olddir"
+mv ~/.matplotlib ~/dotfiles_old/
+echo "Creating symlink to matplotlib in home directory."
+mkdir ~/.matplotlib
+ln -s $dir/matplotlibrc ~/.matplotlib/matplotlibrc
+
 install_zsh () {
 # Test to see if zshell is installed.  If it is:
 if [ -f /bin/zsh -o -f /usr/bin/zsh ]; then
