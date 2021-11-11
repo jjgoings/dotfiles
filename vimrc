@@ -108,5 +108,7 @@ packloadall
 " All messages and errors will be ignored.
 silent! helptags ALL
 
+" ALE off by default -- toggle with :ALEToggle
+let g:ale_enabled = 0 
 
 "let g:ale_warn_about_trailing_whitespace = 0

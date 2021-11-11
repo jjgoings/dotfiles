@@ -43,7 +43,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(z battery osx zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
+plugins=(z battery macos zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -78,21 +78,5 @@ fi
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 
-export PATH=/Users/jjgoings/Library/Orca401:$PATH
-
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/jjgoings/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/jjgoings/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/jjgoings/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/jjgoings/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
+export PATH="/usr/local/sbin:$PATH"
+eval "$(/opt/homebrew/bin/brew shellenv)"
