@@ -251,10 +251,10 @@ lines.antialiased: True            # render lines in antialiased (no jaggies)
 #font.variant: normal
 #font.weight:  normal
 #font.stretch: normal
-font.size:    10.0
+font.size:    8.0
 
 #font.serif:      DejaVu Serif, Bitstream Vera Serif, Computer Modern Roman, New Century Schoolbook, Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L, Times New Roman, Times, Palatino, Charter, serif
-font.sans-serif: Helvetica, DejaVu Sans, Bitstream Vera Sans, Computer Modern Sans Serif, Lucida Grande, Verdana, Geneva, Lucid, Arial, Avant Garde, sans-serif
+font.sans-serif: Roboto, Helvetica, DejaVu Sans, Bitstream Vera Sans, Computer Modern Sans Serif, Lucida Grande, Verdana, Geneva, Lucid, Arial, Avant Garde, sans-serif
 #font.cursive:    Apple Chancery, Textile, Zapf Chancery, Sand, Script MT, Felipa, cursive
 #font.fantasy:    Comic Neue, Comic Sans MS, Chicago, Charcoal, ImpactWestern, Humor Sans, xkcd, fantasy
 #font.monospace:  DejaVu Sans Mono, Bitstream Vera Sans Mono, Computer Modern Typewriter, Andale Mono, Nimbus Mono L, Courier New, Courier, Fixed, Terminal, monospace
@@ -534,8 +534,8 @@ grid.alpha:     0.5     # transparency, between 0.0 and 1.0
 ## See https://matplotlib.org/api/figure_api.html#matplotlib.figure.Figure
 #figure.titlesize:   large     # size of the figure title (``Figure.suptitle()``)
 #figure.titleweight: normal    # weight of the figure title
-figure.figsize:     4.0, 2.47214  # figure size in inches
-figure.dpi:         300       # figure dots per inch
+figure.figsize:     3.2,1.977712  # figure size in inches
+figure.dpi:         240       # figure dots per inch
 #figure.facecolor:   white     # figure facecolor
 #figure.edgecolor:   white     # figure edgecolor
 #figure.frameon:     True      # enable figure frame
