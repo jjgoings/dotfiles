@@ -3,4 +3,4 @@
 	url = https://github.com/robbyrussell/oh-my-zsh.git
 [submodule "vim/pack/plugins/start/vim-polyglot"]
 	path = vim/pack/plugins/start/vim-polyglot
-	url = https://github.com/sheerun/vim-polyglot
+	url = https://github.com/sheerun/vim-polyglot.git
