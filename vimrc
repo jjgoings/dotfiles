@@ -21,7 +21,7 @@ set nocompatible         " get rid of Vi compatibility mode. SET FIRST!
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"filetype plugin indent on " filetype detection[ON] plugin[ON] indent[ON]
+filetype plugin indent on " filetype detection[ON] plugin[ON] indent[ON]
 
 " In Makefiles DO NOT use spaces instead of tabs
 autocmd FileType make setlocal noexpandtab
@@ -37,6 +37,11 @@ set ofu=syntaxcomplete#Complete
 set t_Co=256              " enable 256-color mode.
 syntax enable             " enable syntax highlighting (previously syntax on).
 colorscheme tokyonight    " set colorscheme
+
+" Highlight Python indentation errors
+autocmd FileType python highlight PythonIndentError ctermbg=red guibg=red
+autocmd FileType python match PythonIndentError /^\(\s\{,3}\)\@<!\s\{,3}\S\|^\(\s\{4}\)*\zs\s\{1,3}\S/
+
 
 " Prettify JSON files
 autocmd BufRead,BufNewFile *.json set filetype=json
@@ -112,3 +117,16 @@ silent! helptags ALL
 let g:ale_enabled = 0 
 
 "let g:ale_warn_about_trailing_whitespace = 0
+"
+"" Plugins will be downloaded under the specified directory.
+call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
+
+" Declare the list of plugins.
+Plug 'tpope/vim-sensible'
+Plug 'junegunn/seoul256.vim'
+Plug 'kkoomen/vim-doge', { 'do': 'npm i --no-save && npm run build:binary:unix' }
+
+" List ends here. Plugins become visible to Vim after this call.
+call plug#end()
+
+let g:doge_doc_standard_python = 'numpy'

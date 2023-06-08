@@ -2,7 +2,7 @@
 " Language:     Github Flavored Markdown
 " Markdown.vim Maintainer: Tim Pope <vimNOSPAM@tpope.org>
 " GFM Maintainer: Jeff Tratner <github.com/jtratner>
-" Filenames:    *.ghmarkdown
+" Filenames:    *.md
 " Last Change:	2013 June 8
 " (nearly the same as tpope's markdown.vim, with a few 
 " add-ons for Github Flavored Markdown)

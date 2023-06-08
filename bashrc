@@ -55,5 +55,3 @@ alias ls="ls --color=auto -Gh"
 export CLICOLOR=1
 # Set "ls" colors
 export LSCOLORS=Gxfxcxdxbxegedabagacad
-
-export PATH=/home/jjgoings/anaconda2/bin:$PATH

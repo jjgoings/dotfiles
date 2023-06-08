@@ -1,14 +1,15 @@
 # Explicitly configured $PATH variable
 #PATH=/usr/local/git/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/local/bin:/opt/local/sbin:/usr/X11/bin:/Library/TeX/texbin
 
+
 # Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+ZSH=$HOME/dotfiles/oh-my-zsh
 
 # scp bash-like globbing
 setopt nonomatch
 
 # use fuzzy logic cd-ing with 'z'
-source $HOME/.oh-my-zsh/plugins/z/z.sh
+#source $HOME/.oh-my-zsh/plugins/z/z.sh
 
 # remap backspace
 stty erase '^?'
@@ -43,9 +44,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(z battery macos zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
-
-source $ZSH/oh-my-zsh.sh
+plugins=(autoupdate zsh-z battery macos zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
 
 # Put any proprietary or private functions/values in ~/.private, and this will source them
 if [ -f $HOME/.private ]; then
@@ -58,7 +57,7 @@ fi
 
 # Shell Aliases
 precmd() {
-    _z --add "$(pwd -P)"
+    zshz --add "$(pwd -P)"
 }
 
 
@@ -77,6 +76,19 @@ fi
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+source $ZSH/oh-my-zsh.sh
 
-export PATH="/usr/local/sbin:$PATH"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/goings/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/goings/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/goings/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/goings/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
