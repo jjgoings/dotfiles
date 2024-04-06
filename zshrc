@@ -44,7 +44,7 @@ COMPLETION_WAITING_DOTS="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(autoupdate zsh-z battery macos zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
+plugins=(autoupdate z battery macos zsh-syntax-highlighting brew repo sudo knife vagrant bundler web-search)
 
 # Put any proprietary or private functions/values in ~/.private, and this will source them
 if [ -f $HOME/.private ]; then
@@ -56,10 +56,9 @@ if [ -f $HOME/.profile ]; then
 fi
 
 # Shell Aliases
-precmd() {
-    zshz --add "$(pwd -P)"
-}
-
+#precmd() {
+#    zshz --add "$(pwd -P)"
+#}
 
 # Shell Functions
 # qfind - used to quickly find files that contain a string in a directory
