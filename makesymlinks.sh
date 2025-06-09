@@ -20,6 +20,9 @@ readonly CONFIG_MAPPINGS=(
     "Xresources:.Xresources"
     "private:.private"
     "matplotlibrc:.matplotlib/matplotlibrc"
+    "gitconfig:.gitconfig"
+    "tmux.conf:.tmux.conf"
+    "ripgreprc:.ripgreprc"
 )
 
 # Logging functions
@@ -171,10 +174,83 @@ setup_oh_my_zsh() {
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$custom_plugins/zsh-syntax-highlighting"
     fi
     
-    # zsh-autosuggestions (optional but useful)
+    # zsh-autosuggestions
     if [[ ! -d "$custom_plugins/zsh-autosuggestions" ]]; then
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$custom_plugins/zsh-autosuggestions"
     fi
+}
+
+# Install modern CLI tools
+install_modern_tools() {
+    local platform="$1"
+    
+    log_info "Installing modern CLI tools"
+    
+    case "$platform" in
+        macos)
+            if command -v brew >/dev/null 2>&1; then
+                # Install modern CLI tools via Homebrew
+                local tools=(
+                    "bat"           # Better cat
+                    "eza"           # Better ls
+                    "fd"            # Better find
+                    "ripgrep"       # Better grep
+                    "fzf"           # Fuzzy finder
+                    "tmux"          # Terminal multiplexer
+                    "git-delta"     # Better git diff
+                    "htop"          # Better top
+                    "tree"          # Directory tree
+                )
+                
+                for tool in "${tools[@]}"; do
+                    if ! command -v "${tool}" >/dev/null 2>&1; then
+                        log_info "Installing $tool"
+                        brew install "$tool" || log_warn "Failed to install $tool"
+                    fi
+                done
+            fi
+            ;;
+        debian)
+            local tools=(
+                "bat"
+                "eza" 
+                "fd-find"
+                "ripgrep"
+                "fzf"
+                "tmux"
+                "git-delta"
+                "htop"
+                "tree"
+            )
+            
+            for tool in "${tools[@]}"; do
+                if ! dpkg -l | grep -q "^ii  $tool "; then
+                    log_info "Installing $tool"
+                    sudo apt-get install -y "$tool" || log_warn "Failed to install $tool"
+                fi
+            done
+            ;;
+        arch)
+            local tools=(
+                "bat"
+                "eza"
+                "fd"
+                "ripgrep"
+                "fzf"
+                "tmux"
+                "git-delta"
+                "htop"
+                "tree"
+            )
+            
+            for tool in "${tools[@]}"; do
+                if ! pacman -Q "$tool" >/dev/null 2>&1; then
+                    log_info "Installing $tool"
+                    sudo pacman -S --noconfirm "$tool" || log_warn "Failed to install $tool"
+                fi
+            done
+            ;;
+    esac
 }
 
 # Install zsh and set as default shell
@@ -205,6 +281,81 @@ setup_zsh() {
     fi
 }
 
+# Setup tmux plugin manager
+setup_tmux() {
+    local tpm_dir="$HOME/.tmux/plugins/tpm"
+    
+    if [[ ! -d "$tpm_dir" ]]; then
+        log_info "Installing tmux plugin manager"
+        git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
+        log_info "Run 'prefix + I' in tmux to install plugins"
+    fi
+}
+
+# Setup FZF
+setup_fzf() {
+    if command -v fzf >/dev/null 2>&1; then
+        local fzf_dir="$HOME/.fzf"
+        if [[ ! -d "$fzf_dir" ]]; then
+            log_info "Setting up FZF key bindings"
+            git clone --depth 1 https://github.com/junegunn/fzf.git "$fzf_dir"
+            "$fzf_dir/install" --key-bindings --completion --no-update-rc
+        fi
+    fi
+}
+
+# Create local config files
+create_local_configs() {
+    log_info "Creating local configuration files"
+    
+    # Create .local_zshrc if it doesn't exist
+    if [[ ! -f "$HOME/.local_zshrc" ]]; then
+        cat > "$HOME/.local_zshrc" << 'EOF'
+# Local zsh configuration
+# Add machine-specific settings here
+
+# Example: custom aliases
+# alias ll='ls -la'
+
+# Example: environment variables
+# export MY_VAR="value"
+
+# Example: platform-specific settings
+# case "$OSTYPE" in
+#   darwin*)
+#     # macOS specific settings
+#     ;;
+#   linux*)
+#     # Linux specific settings
+#     ;;
+# esac
+EOF
+        log_info "Created ~/.local_zshrc"
+    fi
+    
+    # Create .gitconfig.local if it doesn't exist
+    if [[ ! -f "$HOME/.gitconfig.local" ]]; then
+        cat > "$HOME/.gitconfig.local" << 'EOF'
+# Local git configuration
+# Add machine-specific git settings here
+
+[user]
+    # Update with your information
+    name = Your Name
+    email = your.email@example.com
+
+# Example: machine-specific settings
+# [core]
+#     sshCommand = ssh -i ~/.ssh/id_rsa_work
+
+# Example: work-specific settings for certain directories
+# [includeIf "gitdir:~/work/"]
+#     path = ~/.gitconfig.work
+EOF
+        log_info "Created ~/.gitconfig.local - UPDATE WITH YOUR GIT CREDENTIALS"
+    fi
+}
+
 # Verify installation
 verify_setup() {
     log_info "Verifying installation"
@@ -224,6 +375,13 @@ verify_setup() {
     if [[ $errors -eq 0 ]]; then
         log_info "Setup completed successfully!"
         log_info "Backup created in: $BACKUP_DIR"
+        log_info ""
+        log_info "Next steps:"
+        log_info "1. Update ~/.gitconfig.local with your git credentials"
+        log_info "2. Restart your terminal or run: exec zsh"
+        log_info "3. Customize ~/.local_zshrc for machine-specific settings"
+        log_info "4. Add private configs to ~/.private"
+        log_info "5. In tmux, press 'prefix + I' to install plugins"
     else
         log_error "Setup completed with $errors errors"
         return 1
@@ -232,7 +390,7 @@ verify_setup() {
 
 # Main execution
 main() {
-    log_info "Starting dotfiles setup"
+    log_info "Starting enhanced dotfiles setup"
     
     # Ensure we're in the correct directory
     if [[ ! -f "$DOTFILES_DIR/makesymlinks.sh" ]]; then
@@ -250,17 +408,20 @@ main() {
     # Install dependencies
     setup_zsh "$platform"
     setup_oh_my_zsh
+    install_modern_tools "$platform"
+    
+    # Setup additional tools
+    setup_tmux
+    setup_fzf
     
     # Create configuration links
     create_symlinks
     
+    # Create local config files
+    create_local_configs
+    
     # Verify installation
     verify_setup
-    
-    log_info "To complete setup:"
-    log_info "1. Restart your terminal or run: exec zsh"
-    log_info "2. Customize ~/.local_zshrc for machine-specific settings"
-    log_info "3. Add private configs to ~/.private"
 }
 
 # Script entry point
