@@ -28,11 +28,6 @@ fi
 # Google Cloud SDK
 [[ -f "$HOME/opt/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/opt/google-cloud-sdk/path.zsh.inc"
 
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'mamba init' !!
-# Micromamba installer will add initialization here
-# <<< mamba initialize <
-
 # FZF configuration
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line"
 export FZF_COMPLETION_TRIGGER='**'
@@ -70,3 +65,19 @@ source $ZSH/oh-my-zsh.sh
 # Load completions
 autoload -Uz compinit
 compinit
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'micromamba shell init' !!
+export MAMBA_EXE='/Users/goings/.local/bin/micromamba';
+export MAMBA_ROOT_PREFIX='/Users/goings/micromamba';
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
+fi
+micromamba activate main
+unset __mamba_setup
+# <<< mamba initialize <<<
+
+. "$HOME/.local/share/../bin/env"

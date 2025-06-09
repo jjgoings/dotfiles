@@ -88,6 +88,7 @@ set wildmenu              " Enhanced command completion
 set wildmode=longest:full,full
 set scrolloff=8           " Keep 8 lines above/below cursor
 set sidescrolloff=8       " Keep 8 columns left/right of cursor
+set clipboard=unnamed     " Use system clipboard for yank/put operations
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 05. Text Formatting/Layout                                                 "

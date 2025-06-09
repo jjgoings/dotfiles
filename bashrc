@@ -55,3 +55,5 @@ alias ls="ls --color=auto -Gh"
 export CLICOLOR=1
 # Set "ls" colors
 export LSCOLORS=Gxfxcxdxbxegedabagacad
+
+. "$HOME/.local/share/../bin/env"
