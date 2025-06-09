@@ -15,7 +15,6 @@ readonly CONFIG_MAPPINGS=(
     "vimrc:.vimrc" 
     "vim:.vim"
     "zshenv:.zshenv"
-    "zprofile:.zprofile"
     "zshrc:.zshrc"
     "Xresources:.Xresources"
     "private:.private"
@@ -157,27 +156,66 @@ create_symlinks() {
 }
 
 # Install and configure oh-my-zsh
+# Enhanced oh-my-zsh setup function - replace existing function in makesymlinks.sh
+
 setup_oh_my_zsh() {
     if [[ -d "$OH_MY_ZSH_DIR" ]]; then
-        log_info "oh-my-zsh already installed"
-        return 0
+        log_info "oh-my-zsh already installed, checking plugins"
+    else
+        log_info "Installing oh-my-zsh"
+        # Install oh-my-zsh without running it immediately
+        RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+        
+        if [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
+            log_error "oh-my-zsh installation failed"
+            return 1
+        fi
     fi
     
-    log_info "Installing oh-my-zsh"
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    
-    # Install additional plugins
+    # Ensure custom plugins directory exists
     local custom_plugins="$OH_MY_ZSH_DIR/custom/plugins"
+    mkdir -p "$custom_plugins"
     
-    # zsh-syntax-highlighting
+    # Install zsh-syntax-highlighting
     if [[ ! -d "$custom_plugins/zsh-syntax-highlighting" ]]; then
+        log_info "Installing zsh-syntax-highlighting plugin"
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$custom_plugins/zsh-syntax-highlighting"
+        if [[ $? -eq 0 ]]; then
+            log_info "✓ zsh-syntax-highlighting installed"
+        else
+            log_error "✗ Failed to install zsh-syntax-highlighting"
+        fi
+    else
+        log_info "✓ zsh-syntax-highlighting already installed"
     fi
     
-    # zsh-autosuggestions
+    # Install zsh-autosuggestions  
     if [[ ! -d "$custom_plugins/zsh-autosuggestions" ]]; then
+        log_info "Installing zsh-autosuggestions plugin"
         git clone https://github.com/zsh-users/zsh-autosuggestions.git "$custom_plugins/zsh-autosuggestions"
+        if [[ $? -eq 0 ]]; then
+            log_info "✓ zsh-autosuggestions installed"
+        else
+            log_error "✗ Failed to install zsh-autosuggestions"
+        fi
+    else
+        log_info "✓ zsh-autosuggestions already installed"
     fi
+    
+    # Verify plugins are accessible
+    log_info "Verifying plugin installation"
+    for plugin in "zsh-syntax-highlighting" "zsh-autosuggestions"; do
+        local plugin_path="$custom_plugins/$plugin"
+        if [[ -d "$plugin_path" && -f "$plugin_path/${plugin}.zsh" ]]; then
+            log_info "✓ $plugin verified"
+        elif [[ -d "$plugin_path" && -f "$plugin_path/${plugin}.plugin.zsh" ]]; then
+            log_info "✓ $plugin verified"
+        else
+            log_warn "✗ $plugin installation may be incomplete"
+            log_info "Expected: $plugin_path"
+            log_info "Contents: $(ls -la "$plugin_path" 2>/dev/null || echo 'Directory not found')"
+        fi
+    done
 }
 
 # Install modern CLI tools
