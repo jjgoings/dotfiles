@@ -1,0 +1,98 @@
+# ripgrep configuration file
+# See 'rg --help' for a description of each flag.
+
+# Set the colors used in output
+--colors=line:none
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:red
+--colors=match:style:bold
+
+# Because we have --fixed-strings, this option has no effect, but we use it
+# as a way to avoid accidentally triggering the default regex engine, which
+# could cause an error.
+--engine=default
+
+# Don't print the file path for each match
+--no-filename
+
+# Search case-insensitively if the search pattern is all lowercase
+--smart-case
+
+# Sort by file path
+--sort=path
+
+# Follow symbolic links
+--follow
+
+# Search hidden files and directories
+--hidden
+
+# Don't search inside .git directories
+--glob=!.git/*
+
+# Don't search node_modules
+--glob=!node_modules/*
+
+# Don't search Python cache directories
+--glob=!__pycache__/*
+--glob=!*.pyc
+
+# Don't search common build directories
+--glob=!build/*
+--glob=!dist/*
+--glob=!target/*
+
+# Don't search common temporary files
+--glob=!*.tmp
+--glob=!*.temp
+--glob=!*~
+
+# Don't search log files
+--glob=!*.log
+
+# Don't search compiled files
+--glob=!*.o
+--glob=!*.so
+--glob=!*.a
+--glob=!*.exe
+
+# Don't search image files
+--glob=!*.jpg
+--glob=!*.jpeg
+--glob=!*.png
+--glob=!*.gif
+--glob=!*.bmp
+--glob=!*.ico
+--glob=!*.svg
+
+# Don't search video files
+--glob=!*.mp4
+--glob=!*.avi
+--glob=!*.mov
+--glob=!*.wmv
+
+# Don't search audio files
+--glob=!*.mp3
+--glob=!*.wav
+--glob=!*.flac
+
+# Don't search archive files
+--glob=!*.zip
+--glob=!*.tar
+--glob=!*.tar.gz
+--glob=!*.tar.bz2
+--glob=!*.rar
+--glob=!*.7z
+
+# Don't search PDF files
+--glob=!*.pdf
+
+# Don't search Office documents
+--glob=!*.doc
+--glob=!*.docx
+--glob=!*.xls
+--glob=!*.xlsx
+--glob=!*.ppt
+--glob=!*.pptx
