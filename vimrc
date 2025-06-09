@@ -220,7 +220,22 @@ let g:ale_sign_warning = '⚠'
 " Airline configuration
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#ale#enabled = 1
-let g:airline_powerline_fonts = 1
+let g:airline_powerline_fonts = 0
+let g:airline_theme = 'minimalist'                " Subtle gray theme
+
+" Remove git clutter from status bar
+let g:airline#extensions#hunks#enabled = 0        " Remove +0 ~3 -0
+let g:airline#extensions#branch#enabled = 0       " Remove branch name
+let g:airline#extensions#gitgutter#enabled = 0    " Remove git indicators
+
+" Clean up the status sections
+" " Minimal status bar - just position info on the right
+let g:airline_section_a = ''                      " Remove mode (NORMAL)
+let g:airline_section_b = ''                      " Remove git info
+let g:airline_section_c = ''                      " Remove filename
+let g:airline_section_x = ''                      " Remove filetype
+let g:airline_section_y = ''                      " Remove encoding info
+let g:airline_section_z = '%p%% %l/%L:%c'         " Clean position: 93% 228/244:20
 
 " GitGutter configuration
 set updatetime=100
