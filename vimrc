@@ -183,7 +183,6 @@ Plug 'airblade/vim-gitgutter'
 " Enhanced editing
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
-Plug 'jiangmiao/auto-pairs'
 
 " Status line
 Plug 'vim-airline/vim-airline'
@@ -243,9 +242,6 @@ let g:airline_section_z = '%p%% %l/%L:%c'         " Clean position: 93% 228/244:
 
 " GitGutter configuration
 set updatetime=100
-
-" Auto-pairs configuration
-let g:AutoPairsShortcutToggle = '<leader>ap'
 
 " Load all plugins now.
 " Plugins need to be added to runtimepath before helptags can be generated.
