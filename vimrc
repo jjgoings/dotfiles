@@ -86,8 +86,8 @@ set statusline=%<%f\%h%m%r%=%-20.(line=%l\ \ col=%c%V\ \ totlin=%L%)\ \ \%h%m%r%
 set visualbell
 set wildmenu              " Enhanced command completion
 set wildmode=longest:full,full
-set scrolloff=8           " Keep 8 lines above/below cursor
-set sidescrolloff=8       " Keep 8 columns left/right of cursor
+set scrolloff=2           " Keep 8 lines above/below cursor
+set sidescrolloff=2       " Keep 8 columns left/right of cursor
 set clipboard=unnamed     " Use system clipboard for yank/put operations
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
