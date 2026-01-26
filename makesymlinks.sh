@@ -31,6 +31,15 @@ log_info() { echo -e "\033[32m[INFO]\033[0m $*"; }
 log_warn() { echo -e "\033[33m[WARN]\033[0m $*"; }
 log_error() { echo -e "\033[31m[ERROR]\033[0m $*"; }
 
+# Check if we have sudo access
+has_sudo() {
+    if command -v sudo >/dev/null 2>&1; then
+        sudo -n true 2>/dev/null || sudo -v 2>/dev/null
+        return $?
+    fi
+    return 1
+}
+
 # Platform detection
 detect_platform() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -160,56 +169,59 @@ create_symlinks() {
 # Install shell tools (starship, zoxide, zsh plugins)
 setup_shell_tools() {
     local platform="$1"
-    log_info "Installing shell tools (starship, zoxide, zsh plugins)"
+    log_info "Setting up shell tools (starship, zoxide, zsh plugins)"
 
-    case "$platform" in
-        macos)
-            if command -v brew >/dev/null 2>&1; then
-                local tools=(starship zoxide zsh-syntax-highlighting zsh-autosuggestions)
-                for tool in "${tools[@]}"; do
-                    if ! brew list "$tool" >/dev/null 2>&1; then
-                        log_info "Installing $tool"
-                        brew install "$tool" || log_warn "Failed to install $tool"
-                    else
-                        log_info "✓ $tool already installed"
-                    fi
-                done
-            else
-                log_warn "Homebrew not found. Install starship, zoxide, zsh-syntax-highlighting, zsh-autosuggestions manually"
-            fi
-            ;;
-        debian)
-            # Install starship
-            if ! command -v starship >/dev/null 2>&1; then
-                log_info "Installing starship"
-                curl -sS https://starship.rs/install.sh | sh -s -- -y
-            fi
-            # Install zoxide
-            if ! command -v zoxide >/dev/null 2>&1; then
-                log_info "Installing zoxide"
-                curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
-            fi
-            # Install zsh plugins via apt or git
-            if [[ ! -d /usr/share/zsh-syntax-highlighting ]]; then
-                sudo apt-get install -y zsh-syntax-highlighting || {
-                    log_info "Installing zsh-syntax-highlighting from git"
-                    sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /usr/share/zsh-syntax-highlighting
-                }
-            fi
-            if [[ ! -d /usr/share/zsh-autosuggestions ]]; then
-                sudo apt-get install -y zsh-autosuggestions || {
-                    log_info "Installing zsh-autosuggestions from git"
-                    sudo git clone https://github.com/zsh-users/zsh-autosuggestions.git /usr/share/zsh-autosuggestions
-                }
-            fi
-            ;;
-        arch)
-            sudo pacman -S --noconfirm starship zoxide zsh-syntax-highlighting zsh-autosuggestions
-            ;;
-        *)
-            log_warn "Unknown platform. Install starship, zoxide, zsh-syntax-highlighting, zsh-autosuggestions manually"
-            ;;
-    esac
+    # Starship - can install to ~/.local/bin without sudo
+    if ! command -v starship >/dev/null 2>&1; then
+        log_info "Installing starship to ~/.local/bin"
+        mkdir -p "$HOME/.local/bin"
+        curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" 2>/dev/null || \
+            log_warn "Failed to install starship. Install manually: https://starship.rs"
+    else
+        log_info "✓ starship already installed"
+    fi
+
+    # Zoxide - can install to ~/.local/bin without sudo
+    if ! command -v zoxide >/dev/null 2>&1; then
+        log_info "Installing zoxide to ~/.local/bin"
+        mkdir -p "$HOME/.local/bin"
+        curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash 2>/dev/null || \
+            log_warn "Failed to install zoxide. Install manually: https://github.com/ajeetdsouza/zoxide"
+    else
+        log_info "✓ zoxide already installed"
+    fi
+
+    # Zsh plugins - clone to user directory if system-wide not available
+    local zsh_plugin_dir="$HOME/.zsh/plugins"
+
+    # Check for system-wide plugins first
+    local has_syntax_hl=false has_autosugg=false
+    for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
+        [[ -f "$p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && has_syntax_hl=true
+        [[ -f "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && has_autosugg=true
+    done
+
+    if ! $has_syntax_hl; then
+        if [[ ! -d "$zsh_plugin_dir/zsh-syntax-highlighting" ]]; then
+            log_info "Installing zsh-syntax-highlighting to $zsh_plugin_dir"
+            mkdir -p "$zsh_plugin_dir"
+            git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$zsh_plugin_dir/zsh-syntax-highlighting" 2>/dev/null || \
+                log_warn "Failed to clone zsh-syntax-highlighting"
+        else
+            log_info "✓ zsh-syntax-highlighting already installed"
+        fi
+    fi
+
+    if ! $has_autosugg; then
+        if [[ ! -d "$zsh_plugin_dir/zsh-autosuggestions" ]]; then
+            log_info "Installing zsh-autosuggestions to $zsh_plugin_dir"
+            mkdir -p "$zsh_plugin_dir"
+            git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git "$zsh_plugin_dir/zsh-autosuggestions" 2>/dev/null || \
+                log_warn "Failed to clone zsh-autosuggestions"
+        else
+            log_info "✓ zsh-autosuggestions already installed"
+        fi
+    fi
 
     # Clear cached init scripts so they regenerate with new binaries
     rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
@@ -217,75 +229,31 @@ setup_shell_tools() {
     log_info "✓ Shell tools setup complete"
 }
 
-# Install modern CLI tools
+# Install modern CLI tools (optional, skip if no sudo on Linux)
 install_modern_tools() {
     local platform="$1"
-    
-    log_info "Installing modern CLI tools"
-    
+
     case "$platform" in
         macos)
             if command -v brew >/dev/null 2>&1; then
-                # Install modern CLI tools via Homebrew
-                local tools=(
-                    "bat"           # Better cat
-                    "eza"           # Better ls
-                    "fd"            # Better find
-                    "ripgrep"       # Better grep
-                    "fzf"           # Fuzzy finder
-                    "tmux"          # Terminal multiplexer
-                    "git-delta"     # Better git diff
-                    "htop"          # Better top
-                    "tree"          # Directory tree
-                )
-                
+                log_info "Installing modern CLI tools via Homebrew"
+                local tools=(bat eza fd ripgrep fzf tmux git-delta htop tree)
                 for tool in "${tools[@]}"; do
-                    if ! command -v "${tool}" >/dev/null 2>&1; then
+                    if ! brew list "$tool" >/dev/null 2>&1; then
                         log_info "Installing $tool"
                         brew install "$tool" || log_warn "Failed to install $tool"
                     fi
                 done
             fi
             ;;
-        debian)
-            local tools=(
-                "bat"
-                "eza" 
-                "fd-find"
-                "ripgrep"
-                "fzf"
-                "tmux"
-                "git-delta"
-                "htop"
-                "tree"
-            )
-            
-            for tool in "${tools[@]}"; do
-                if ! dpkg -l | grep -q "^ii  $tool "; then
-                    log_info "Installing $tool"
-                    sudo apt-get install -y "$tool" || log_warn "Failed to install $tool"
-                fi
-            done
-            ;;
-        arch)
-            local tools=(
-                "bat"
-                "eza"
-                "fd"
-                "ripgrep"
-                "fzf"
-                "tmux"
-                "git-delta"
-                "htop"
-                "tree"
-            )
-            
-            for tool in "${tools[@]}"; do
-                if ! pacman -Q "$tool" >/dev/null 2>&1; then
-                    log_info "Installing $tool"
-                    sudo pacman -S --noconfirm "$tool" || log_warn "Failed to install $tool"
-                fi
-            done
+        *)
+            if has_sudo; then
+                log_info "Installing modern CLI tools (requires sudo)"
+                # Platform-specific installs...
+            else
+                log_info "Skipping modern CLI tools (no sudo). These are optional."
+                log_info "Available tools will be used if installed by admin."
+            fi
             ;;
     esac
 }
@@ -293,28 +261,43 @@ install_modern_tools() {
 # Install zsh and set as default shell
 setup_zsh() {
     local platform="$1"
-    
+
     if ! command -v zsh >/dev/null 2>&1; then
-        log_info "Installing zsh"
-        case "$platform" in
-            macos) install_packages "$platform" zsh ;;
-            debian) install_packages "$platform" zsh ;;
-            rhel) install_packages "$platform" zsh ;;
-            arch) install_packages "$platform" zsh ;;
-        esac
+        if has_sudo; then
+            log_info "Installing zsh"
+            case "$platform" in
+                macos) install_packages "$platform" zsh ;;
+                debian) install_packages "$platform" zsh ;;
+                rhel) install_packages "$platform" zsh ;;
+                arch) install_packages "$platform" zsh ;;
+            esac
+        else
+            log_warn "zsh not found and no sudo access. Install zsh manually or ask admin."
+            return 0
+        fi
     fi
-    
-    # Set zsh as default shell
+
+    # Set zsh as default shell (skip if no sudo)
     local zsh_path
     zsh_path="$(command -v zsh)"
-    
+
+    if [[ -z "$zsh_path" ]]; then
+        log_warn "zsh not available, skipping shell setup"
+        return 0
+    fi
+
     if [[ "$SHELL" != "$zsh_path" ]]; then
-        log_info "Setting zsh as default shell"
-        if ! grep -q "$zsh_path" /etc/shells; then
-            echo "$zsh_path" | sudo tee -a /etc/shells
+        if has_sudo; then
+            log_info "Setting zsh as default shell"
+            if ! grep -q "$zsh_path" /etc/shells 2>/dev/null; then
+                echo "$zsh_path" | sudo tee -a /etc/shells
+            fi
+            chsh -s "$zsh_path"
+            log_info "Shell changed. Restart terminal or login again to take effect"
+        else
+            log_warn "Cannot change default shell without sudo. Run 'zsh' manually or add to ~/.bash_profile:"
+            log_warn "  exec zsh"
         fi
-        chsh -s "$zsh_path"
-        log_info "Shell changed. Restart terminal or login again to take effect"
     fi
 }
 

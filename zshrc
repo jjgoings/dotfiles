@@ -100,11 +100,11 @@ if command -v zoxide >/dev/null 2>&1; then
     source "$_zoxide_cache"
 fi
 
-# Syntax highlighting & autosuggestions (check common install locations)
-for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
+# Syntax highlighting & autosuggestions (check common install locations + user dir)
+for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins "$HOME/.zsh/plugins"; do
     [[ -f "$p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" && break
 done
-for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
+for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins "$HOME/.zsh/plugins"; do
     [[ -f "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" && break
 done
 
