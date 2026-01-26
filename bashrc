@@ -12,6 +12,12 @@
 ##############################################################################
 # 01. General                                                                #
 ##############################################################################
+# Switch to zsh if available (for systems where zsh isn't default)
+# Only for interactive shells — keeps scp/rsync/batch jobs working
+if [[ $- == *i* ]] && [[ -z "$ZSH_VERSION" ]] && command -v zsh >/dev/null 2>&1; then
+    exec zsh -l
+fi
+
 # Shell prompt
 export PS1="\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] "
 
