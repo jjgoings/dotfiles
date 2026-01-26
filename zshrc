@@ -96,7 +96,7 @@ if command -v starship >/dev/null 2>&1; then
     if [[ ! -f "$_starship_cache" ]]; then
         starship init zsh > "$_starship_cache"
         # Patch for old zsh (< 5.1) that doesn't support [[ -v var ]]
-        if ! is-at-least 5.1 2>/dev/null; then
+        if [[ ${ZSH_VERSION:0:3} < "5.1" ]]; then
             sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_starship_cache" 2>/dev/null
         fi
     fi
@@ -109,7 +109,7 @@ if command -v zoxide >/dev/null 2>&1; then
     if [[ ! -f "$_zoxide_cache" ]]; then
         zoxide init zsh --cmd z > "$_zoxide_cache"
         # Patch for old zsh (< 5.1)
-        if ! is-at-least 5.1 2>/dev/null; then
+        if [[ ${ZSH_VERSION:0:3} < "5.1" ]]; then
             sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_zoxide_cache" 2>/dev/null
         fi
     fi
