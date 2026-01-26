@@ -23,6 +23,7 @@ readonly CONFIG_MAPPINGS=(
     "tmux.conf:.tmux.conf"
     "ripgreprc:.ripgreprc"
     "starship.toml:.config/starship.toml"
+    "fzf.zsh:.fzf.zsh"
 )
 
 # Logging functions

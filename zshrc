@@ -1,4 +1,5 @@
 # Interactive shell configuration
+# Machine-specific config goes in ~/.local_zshrc
 
 # Shell options
 setopt nonomatch
@@ -12,12 +13,11 @@ if [[ ! "$SSH_AUTH_SOCK" && -f "$XDG_RUNTIME_DIR/ssh-agent.env" ]]; then
     source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
 fi
 
-# Source additional configurations
+# Source machine-specific configurations (secrets, paths, etc.)
 [[ -f $HOME/.local_zshrc ]] && source $HOME/.local_zshrc
 [[ -f $HOME/.private ]] && source $HOME/.private
-[[ -f $HOME/.profile ]] && source $HOME/.profile
 
-# Google Cloud SDK
+# Google Cloud SDK (if installed)
 [[ -f "$HOME/opt/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/opt/google-cloud-sdk/path.zsh.inc"
 
 # FZF configuration
@@ -25,13 +25,15 @@ export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:ki
 export FZF_COMPLETION_TRIGGER='**'
 
 if command -v fzf >/dev/null 2>&1; then
-    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    if command -v fd >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    fi
     [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 fi
 
-# Modern CLI aliases
+# Modern CLI aliases (only if tools are installed)
 command -v bat >/dev/null 2>&1 && alias cat='bat'
 command -v rg >/dev/null 2>&1 && alias grep='rg'
 command -v fd >/dev/null 2>&1 && alias find='fd'
@@ -46,29 +48,36 @@ else
 fi
 
 # Shell functions
+# Note: qfind uses /usr/bin/find explicitly since 'find' may be aliased to fd
 qfind() {
-    find . -exec grep -l -s $1 {} \;
-    return 0
+    /usr/bin/find . -exec grep -l -s "$1" {} \;
 }
 
-# Load completions
+# Completion configuration (must be before compinit)
+zstyle ':completion:*' menu select
 fpath+=~/.zfunc
+
+# Load completions
 autoload -Uz compinit
 compinit
 
 # Prompt (starship - async git, fast)
-_starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
-if [[ ! -f "$_starship_cache" ]]; then
-    starship init zsh > "$_starship_cache"
+if command -v starship >/dev/null 2>&1; then
+    _starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
+    if [[ ! -f "$_starship_cache" ]]; then
+        starship init zsh > "$_starship_cache"
+    fi
+    source "$_starship_cache"
 fi
-source "$_starship_cache"
 
-# Directory jumping (zoxide - same 'z' command, faster than oh-my-zsh z plugin)
-_zoxide_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zoxide_init.zsh"
-if [[ ! -f "$_zoxide_cache" ]]; then
-    zoxide init zsh --cmd z > "$_zoxide_cache"
+# Directory jumping (zoxide - same 'z' command)
+if command -v zoxide >/dev/null 2>&1; then
+    _zoxide_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zoxide_init.zsh"
+    if [[ ! -f "$_zoxide_cache" ]]; then
+        zoxide init zsh --cmd z > "$_zoxide_cache"
+    fi
+    source "$_zoxide_cache"
 fi
-source "$_zoxide_cache"
 
 # Syntax highlighting & autosuggestions (check common install locations)
 for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
@@ -78,7 +87,7 @@ for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins;
     [[ -f "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" && break
 done
 
-# >>> mamba initialize (cached) >>>
+# Micromamba/conda (if installed)
 if [[ -x "$HOME/.local/bin/micromamba" ]]; then
     export MAMBA_EXE="$HOME/.local/bin/micromamba"
     export MAMBA_ROOT_PREFIX="$HOME/micromamba"
@@ -90,9 +99,9 @@ if [[ -x "$HOME/.local/bin/micromamba" ]]; then
     [[ -d "$MAMBA_ROOT_PREFIX/envs/main" ]] && micromamba activate main
     unset _mamba_cache
 fi
-# <<< mamba initialize <<<
 
-[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
+# Cargo env (if installed via rustup)
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # Lazy-load NVM (loads on first use of nvm/node/npm/npx)
 if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
@@ -109,6 +118,5 @@ if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
     npx() { nvm && npx "$@"; }
 fi
 
-zstyle ':completion:*' menu select
-# Source workflow functions
+# Source workflow functions (portable, in repo)
 [[ -f ~/dotfiles/zshrc.local ]] && source ~/dotfiles/zshrc.local

@@ -1,13 +1,22 @@
 # .zshenv - Universal environment variables (loaded for all zsh instances)
+# Machine-specific config (JAVA_HOME, API keys, etc.) goes in ~/.local_zshrc
 
-# Editor preference
-[[ -x /usr/bin/vim ]] && export EDITOR=/usr/bin/vim
+# Editor preference (check common locations, fallback to PATH lookup)
+if [[ -x /opt/homebrew/bin/vim ]]; then
+    export EDITOR=/opt/homebrew/bin/vim
+elif [[ -x /usr/local/bin/vim ]]; then
+    export EDITOR=/usr/local/bin/vim
+elif [[ -x /usr/bin/vim ]]; then
+    export EDITOR=/usr/bin/vim
+elif command -v vim >/dev/null 2>&1; then
+    export EDITOR=vim
+fi
 
 # Core environment
 export CLICOLOR=1
 export LSCOLORS=Gxfxcxdxbxegedabagacad
 
-# Modern CLI tool configurations  
+# Modern CLI tool configurations
 export BAT_THEME="GitHub"
 export BAT_STYLE="numbers,changes,header"
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
@@ -21,7 +30,7 @@ export HISTFILE="$HOME/.zsh_history"
 
 # XDG Base Directory Specification
 export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share" 
+export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 
@@ -40,17 +49,10 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 # GPG configuration
 export GPG_TTY=$(tty)
 
-# JVM installed by coursier
-export JAVA_HOME="/Users/goings/Library/Caches/Coursier/arc/https/github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_mac_hotspot_8u292b10.tar.gz/jdk8u292b10/Contents/Home"
-
-# PATH modifications
+# PATH modifications (portable paths only)
 [[ -d "$HOME/.cargo/bin" ]] && export PATH="$HOME/.cargo/bin:$PATH"
 [[ -d "$HOME/go/bin" ]] && export PATH="$HOME/go/bin:$PATH"
 [[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
-
-# Coursier install directory
-coursier_bin="$HOME/Library/Application Support/Coursier/bin"
-[[ -d "$coursier_bin" ]] && export PATH="$PATH:$coursier_bin"
 
 # Homebrew (macOS)
 if [[ "$OSTYPE" == "darwin"* ]]; then
