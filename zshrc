@@ -5,6 +5,18 @@
 setopt nonomatch
 stty erase '^?'
 
+# History configuration
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # Write timestamp to history
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicates first
+setopt HIST_IGNORE_DUPS          # Don't record duplicates
+setopt HIST_IGNORE_SPACE         # Don't record lines starting with space
+setopt HIST_VERIFY               # Show command before executing from history
+setopt SHARE_HISTORY             # Share history between sessions
+setopt INC_APPEND_HISTORY        # Add commands immediately
+
 # SSH agent management
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
     [[ -d "$XDG_RUNTIME_DIR" ]] && ssh-agent > "$XDG_RUNTIME_DIR/ssh-agent.env"
@@ -60,6 +72,15 @@ fpath+=~/.zfunc
 # Load completions
 autoload -Uz compinit
 compinit
+
+# Key bindings for history search (up/down arrow match prefix)
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search    # Up arrow
+bindkey "^[[B" down-line-or-beginning-search  # Down arrow
+bindkey "^P" up-line-or-beginning-search      # Ctrl-P
+bindkey "^N" down-line-or-beginning-search    # Ctrl-N
 
 # Prompt (starship - async git, fast)
 if command -v starship >/dev/null 2>&1; then
