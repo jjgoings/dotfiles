@@ -67,3 +67,11 @@ export LSCOLORS=Gxfxcxdxbxegedabagacad
 
 # Cargo env (if installed)
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
+# Micromamba/conda (if installed)
+if [[ -x "$HOME/.local/bin/micromamba" ]]; then
+    export MAMBA_EXE="$HOME/.local/bin/micromamba"
+    export MAMBA_ROOT_PREFIX="$HOME/micromamba"
+    eval "$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2>/dev/null)"
+    [[ -d "$MAMBA_ROOT_PREFIX/envs/main" ]] && micromamba activate main
+fi
