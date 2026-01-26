@@ -7,7 +7,7 @@
     editor = vim
     autocrlf = input
     excludesfile = ~/.gitignore_global
-    pager = less -FRX
+    pager = delta
     precomposeunicode = true
     quotepath = false
 
@@ -20,6 +20,7 @@
 
 [pull]
     rebase = true
+    autoStash = true
 
 [rebase]
     autoStash = true
@@ -39,6 +40,11 @@
 [branch]
     autosetupmerge = always
     autosetuprebase = always
+    sort = -committerdate
+
+[rerere]
+    enabled = true
+    autoUpdate = true
 
 [color]
     ui = auto
@@ -93,3 +99,11 @@
 	helper = osxkeychain
 [difftool]
 	prompt = false
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    dark = true
+    line-numbers = true
