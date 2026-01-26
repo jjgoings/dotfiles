@@ -1,6 +1,9 @@
 # Interactive shell configuration
 # Machine-specific config goes in ~/.local_zshrc
 
+# Load zsh built-in functions (needed on minimal zsh installs)
+autoload -Uz add-zsh-hook is-at-least compinit bashcompinit 2>/dev/null
+
 # Shell options
 setopt nonomatch
 stty erase '^?'
