@@ -344,30 +344,39 @@ setup_fzf() {
 # Create local config files
 create_local_configs() {
     log_info "Creating local configuration files"
-    
-    # Create .local_zshrc if it doesn't exist
-    if [[ ! -f "$HOME/.local_zshrc" ]]; then
-        cat > "$HOME/.local_zshrc" << 'EOF'
-# Local zsh configuration
-# Add machine-specific settings here
 
-# Example: custom aliases
-# alias ll='ls -la'
+    # Create .private for secrets if it doesn't exist
+    if [[ ! -f "$HOME/.private" ]]; then
+        cat > "$HOME/.private" << 'EOF'
+# ~/.private - SECRETS ONLY
+# API keys, tokens, passwords - NEVER commit this file
+#
+# Add secrets with: add-secret VAR_NAME "value"
+# Or manually:      export VAR_NAME="value"
+#
+# Machine config (paths, aliases, tools) goes in ~/.local_zshrc
+# ─────────────────────────────────────────────────────────────
 
-# Example: environment variables
-# export MY_VAR="value"
-
-# Example: platform-specific settings
-# case "$OSTYPE" in
-#   darwin*)
-#     # macOS specific settings
-#     ;;
-#   linux*)
-#     # Linux specific settings
-#     ;;
-# esac
 EOF
-        log_info "Created ~/.local_zshrc"
+        chmod 600 "$HOME/.private"
+        log_info "Created ~/.private (mode 600)"
+    fi
+
+    # Create .local_zshrc from template if it doesn't exist
+    if [[ ! -f "$HOME/.local_zshrc" ]]; then
+        if [[ -f "$DOTFILES_DIR/local_zshrc.template" ]]; then
+            cp "$DOTFILES_DIR/local_zshrc.template" "$HOME/.local_zshrc"
+            log_info "Created ~/.local_zshrc from template"
+        else
+            cat > "$HOME/.local_zshrc" << 'EOF'
+# ~/.local_zshrc - MACHINE-SPECIFIC CONFIG
+# Non-secret settings, paths, and tools for this machine
+#
+# SECRETS (API keys, tokens) go in ~/.private
+# Add secrets with: add-secret VAR_NAME "value"
+EOF
+            log_info "Created ~/.local_zshrc (minimal)"
+        fi
     fi
     
     # Create .gitconfig.local if it doesn't exist
@@ -414,12 +423,12 @@ verify_setup() {
         log_info "Backup created in: $BACKUP_DIR"
         log_info ""
         log_info "Next steps:"
-        log_info "1. Update ~/.gitconfig.local with your git credentials"
-        log_info "2. Restart your terminal or run: exec zsh"
-        log_info "3. Customize ~/.local_zshrc for machine-specific settings"
-        log_info "4. Add private configs to ~/.private"
-        log_info "5. In tmux, press 'prefix + I' to install plugins"
-        log_info "6. Edit ~/.config/starship.toml to customize your prompt"
+        log_info "1. Restart your terminal or run: exec zsh"
+        log_info "2. Add API keys/secrets: add-secret VAR_NAME \"value\""
+        log_info "3. Update ~/.gitconfig.local with your git credentials"
+        log_info "4. Customize ~/.local_zshrc for machine-specific paths/tools"
+        log_info "5. Edit ~/.config/starship.toml to customize your prompt"
+        log_info "6. In tmux, press 'prefix + I' to install plugins"
     else
         log_error "Setup completed with $errors errors"
         return 1

@@ -1,7 +1,23 @@
-# Workflow automation for organized system
-# Created: 2025-11-26
+# Workflow automation and helpers
+# Portable functions that work on any machine
 
-# Navigation shortcuts
+# ┌──────────────────────────────────────────────────────────┐
+# │ Secret management                                         │
+# └──────────────────────────────────────────────────────────┘
+add-secret() {
+    if [[ -z "$1" || -z "$2" ]]; then
+        echo "Usage: add-secret VAR_NAME \"value\""
+        echo "Adds export VAR_NAME=\"value\" to ~/.private"
+        return 1
+    fi
+    echo "export $1=\"$2\"" >> ~/.private
+    export "$1=$2"
+    echo "✓ Added $1 to ~/.private (loaded)"
+}
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Navigation shortcuts                                      │
+# └──────────────────────────────────────────────────────────┘
 alias proj='cd ~/projects'
 alias clients='cd ~/projects/clients'
 alias research='cd ~/projects/research'
@@ -122,6 +138,9 @@ alias qp='git push origin $(git rev-parse --abbrev-ref HEAD 2>/dev/null)'
 # Help
 workflow-help() {
     cat << 'HELP'
+SECRETS
+  add-secret VAR "value"   - Add secret to ~/.private
+
 NAVIGATION
   proj, clients, research, work  - Quick directory jumps
   p <name>                       - Find project by name

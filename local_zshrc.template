@@ -1,0 +1,114 @@
+# ~/.local_zshrc - MACHINE-SPECIFIC CONFIG
+# Non-secret settings, paths, and tools for this machine
+#
+# SECRETS (API keys, tokens) go in ~/.private
+# Add secrets with: add-secret VAR_NAME "value"
+# ─────────────────────────────────────────────────────────────
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Machine-specific paths                                    │
+# └──────────────────────────────────────────────────────────┘
+# Uncomment and adjust as needed:
+
+# export JAVA_HOME="/path/to/java"
+# export PATH="$JAVA_HOME/bin:$PATH"
+
+# Coursier (Scala)
+# [[ -d "$HOME/Library/Application Support/Coursier/bin" ]] && \
+#     export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Google Cloud SDK                                          │
+# └──────────────────────────────────────────────────────────┘
+if [[ -d "$HOME/opt/google-cloud-sdk" ]]; then
+    [[ -f "$HOME/opt/google-cloud-sdk/path.zsh.inc" ]] && \
+        source "$HOME/opt/google-cloud-sdk/path.zsh.inc"
+    [[ -f "$HOME/opt/google-cloud-sdk/completion.zsh.inc" ]] && \
+        source "$HOME/opt/google-cloud-sdk/completion.zsh.inc"
+    export CLOUDSDK_PYTHON_SITEPACKAGES=1
+fi
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Cluster tools (GCP HPC)                                   │
+# └──────────────────────────────────────────────────────────┘
+# Configure these for your cluster:
+# CLUSTER_LOGIN_NODE="your-login-node"
+# CLUSTER_PROJECT="your-project"
+# CLUSTER_ZONE="us-central1-c"
+
+if [[ -n "$CLUSTER_LOGIN_NODE" ]]; then
+    # SSH wrapper with keepalive settings
+    [[ ! -f ~/.local/bin/gcp-rsync-ssh ]] && {
+        mkdir -p ~/.local/bin
+        cat > ~/.local/bin/gcp-rsync-ssh << 'SSHWRAPPER'
+#!/bin/bash
+host="$1"; shift
+exec gcloud compute ssh --zone "${CLUSTER_ZONE:-us-central1-c}" "$host" \
+    --tunnel-through-iap --project "${CLUSTER_PROJECT}" --quiet \
+    -- -T -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+    -o TCPKeepAlive=yes -o ConnectTimeout=60 "$@"
+SSHWRAPPER
+        chmod +x ~/.local/bin/gcp-rsync-ssh
+    }
+
+    cluster-ssh() {
+        gcloud compute ssh --zone "$CLUSTER_ZONE" "$CLUSTER_LOGIN_NODE" \
+            --tunnel-through-iap --project "$CLUSTER_PROJECT"
+    }
+
+    _cluster-sync-once() {
+        local direction="$1" source="$2" dest="${3:-.}"
+        local -a opts=(-avhP --compress --inplace --partial --timeout=300)
+        case "$direction" in
+            push) rsync "${opts[@]}" -e ~/.local/bin/gcp-rsync-ssh "$source" "$CLUSTER_LOGIN_NODE:$dest" ;;
+            pull) rsync "${opts[@]}" -e ~/.local/bin/gcp-rsync-ssh "$CLUSTER_LOGIN_NODE:$source" "$dest" ;;
+            *) echo "Usage: cluster-sync {push|pull} source [dest]"; return 1 ;;
+        esac
+    }
+
+    cluster-sync() {
+        local direction="$1" source="$2" dest="${3:-.}" attempt=1 max=10
+        while (( attempt <= max )); do
+            (( attempt > 1 )) && echo "==> Retry $attempt/$max"
+            _cluster-sync-once "$direction" "$source" "$dest" && return 0
+            (( attempt < max )) && { echo "==> Resuming in 5s..."; sleep 5; }
+            ((attempt++))
+        done
+        echo "==> Failed after $max attempts"; return 1
+    }
+
+    alias cssh='cluster-ssh'
+    alias cpush='cluster-sync push'
+    alias cpull='cluster-sync pull'
+
+    cluster-help() {
+        cat << 'EOF'
+Cluster tools:
+  cssh                   - SSH to cluster
+  cpush <source> [dest]  - Push to cluster (auto-retry)
+  cpull <source> [dest]  - Pull from cluster (auto-retry)
+EOF
+    }
+fi
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Application aliases                                       │
+# └──────────────────────────────────────────────────────────┘
+# Uncomment or add your own:
+
+# alias vmd='/Applications/VMD.app/Contents/MacOS/startup.command'
+# alias gssh='gcloud compute ssh INSTANCE --tunnel-through-iap'
+
+# ┌──────────────────────────────────────────────────────────┐
+# │ Tool-specific settings                                    │
+# └──────────────────────────────────────────────────────────┘
+
+# Ollama
+# export OLLAMA_KEEP_ALIVE="1h"
+# export OLLAMA_MAX_LOADED_MODELS=1
+
+# PySCF
+# export PYSCF_MAX_MEMORY=30000
+
+# MPI
+# export FI_PROVIDER=tcp
