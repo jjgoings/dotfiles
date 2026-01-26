@@ -1,7 +1,7 @@
 [user]
     # Update these with your information
-    name = Your Name
-    email = your.email@example.com
+    name = jjgoings 
+    email = jjgoings@users.noreply.github.com 
 
 [core]
     editor = vim
@@ -29,7 +29,7 @@
     conflictstyle = diff3
 
 [diff]
-    tool = vimdiff
+	tool = vimdiff
     algorithm = patience
     colorMoved = zebra
 
@@ -89,3 +89,7 @@
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
     required = true
+[credential]
+	helper = osxkeychain
+[difftool]
+	prompt = false

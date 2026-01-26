@@ -18,6 +18,7 @@
 " 01. General                                                                "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible         " get rid of Vi compatibility mode. SET FIRST!
+set paste                " always use paste mode
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 02. Events                                                                 "
@@ -88,7 +89,7 @@ set wildmenu              " Enhanced command completion
 set wildmode=longest:full,full
 set scrolloff=2           " Keep 8 lines above/below cursor
 set sidescrolloff=2       " Keep 8 columns left/right of cursor
-set clipboard=unnamed     " Use system clipboard for yank/put operations
+"set clipboard=unnamed     " Use system clipboard for yank/put operations
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 05. Text Formatting/Layout                                                 "

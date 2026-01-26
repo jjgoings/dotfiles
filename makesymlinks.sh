@@ -18,7 +18,7 @@ readonly CONFIG_MAPPINGS=(
     "zshrc.local:.zshrc.local"
     "Xresources:.Xresources"
     "private:.private"
-    "matplotlibrc:.matplotlib/matplotlibrc"
+    "matplotlibrc:.config/matplotlib/matplotlibrc"
     "gitconfig:.gitconfig"
     "tmux.conf:.tmux.conf"
     "ripgreprc:.ripgreprc"
