@@ -95,10 +95,9 @@ if command -v starship >/dev/null 2>&1; then
     _starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
     if [[ ! -f "$_starship_cache" ]]; then
         starship init zsh > "$_starship_cache"
-        # Patch for old zsh (< 5.1) that doesn't support [[ -v var ]]
-        if [[ ${ZSH_VERSION:0:3} < "5.1" ]]; then
-            sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_starship_cache" 2>/dev/null
-        fi
+        # Patch for old zsh that doesn't support [[ -v var ]] (harmless on new zsh)
+        sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_starship_cache" 2>/dev/null
+        rm -f "${_starship_cache}.bak" 2>/dev/null
     fi
     source "$_starship_cache"
 fi
@@ -108,10 +107,9 @@ if command -v zoxide >/dev/null 2>&1; then
     _zoxide_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zoxide_init.zsh"
     if [[ ! -f "$_zoxide_cache" ]]; then
         zoxide init zsh --cmd z > "$_zoxide_cache"
-        # Patch for old zsh (< 5.1)
-        if [[ ${ZSH_VERSION:0:3} < "5.1" ]]; then
-            sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_zoxide_cache" 2>/dev/null
-        fi
+        # Patch for old zsh (harmless on new zsh)
+        sed -i.bak 's/\[\[ -v \([^]]*\) \]\]/(( ${+\1} ))/g' "$_zoxide_cache" 2>/dev/null
+        rm -f "${_zoxide_cache}.bak" 2>/dev/null
     fi
     source "$_zoxide_cache"
 fi
