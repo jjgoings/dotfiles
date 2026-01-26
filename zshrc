@@ -1,7 +1,12 @@
 # Interactive shell configuration
 # Machine-specific config goes in ~/.local_zshrc
 
-# Load zsh built-in functions (needed on minimal zsh installs)
+# Fix fpath for minimal zsh installs (RHEL/CentOS)
+for p in /usr/share/zsh/${ZSH_VERSION}/functions /usr/share/zsh/functions /usr/share/zsh/site-functions; do
+    [[ -d "$p" ]] && fpath=("$p" $fpath)
+done
+
+# Load zsh built-in functions
 autoload -Uz add-zsh-hook is-at-least compinit bashcompinit 2>/dev/null
 
 # Shell options
