@@ -1,4 +1,5 @@
 # Risto-style prompt: (env) user@host:path ‹branch› $
+add_newline = false
 format = "$conda[${username}@${hostname}:](blue)$directory$git_branch$character"
 
 [conda]
