@@ -1,16 +1,8 @@
 # Interactive shell configuration
 
-# Oh-my-zsh setup
-ZSH=$HOME/.oh-my-zsh
-
 # Shell options
 setopt nonomatch
 stty erase '^?'
-
-# Theme and plugins
-ZSH_THEME="risto"
-COMPLETION_WAITING_DOTS="true"
-plugins=(git z battery macos zsh-syntax-highlighting zsh-autosuggestions)
 
 # SSH agent management
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
@@ -59,25 +51,64 @@ qfind() {
     return 0
 }
 
-# Load oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-
 # Load completions
+fpath+=~/.zfunc
 autoload -Uz compinit
 compinit
 
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'micromamba shell init' !!
-export MAMBA_EXE='/Users/goings/.local/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/Users/goings/micromamba';
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
-else
-    alias micromamba="$MAMBA_EXE"  # Fallback on help from micromamba activate
+# Prompt (starship - async git, fast)
+_starship_cache="${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
+if [[ ! -f "$_starship_cache" ]]; then
+    starship init zsh > "$_starship_cache"
 fi
-micromamba activate main
-unset __mamba_setup
+source "$_starship_cache"
+
+# Directory jumping (zoxide - same 'z' command, faster than oh-my-zsh z plugin)
+_zoxide_cache="${XDG_CACHE_HOME:-$HOME/.cache}/zoxide_init.zsh"
+if [[ ! -f "$_zoxide_cache" ]]; then
+    zoxide init zsh --cmd z > "$_zoxide_cache"
+fi
+source "$_zoxide_cache"
+
+# Syntax highlighting & autosuggestions (check common install locations)
+for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
+    [[ -f "$p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$p/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" && break
+done
+for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins; do
+    [[ -f "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" && break
+done
+
+# >>> mamba initialize (cached) >>>
+if [[ -x "$HOME/.local/bin/micromamba" ]]; then
+    export MAMBA_EXE="$HOME/.local/bin/micromamba"
+    export MAMBA_ROOT_PREFIX="$HOME/micromamba"
+    _mamba_cache="${XDG_CACHE_HOME:-$HOME/.cache}/mamba_hook.zsh"
+    if [[ ! -f "$_mamba_cache" || "$MAMBA_EXE" -nt "$_mamba_cache" ]]; then
+        "$MAMBA_EXE" shell hook --shell zsh --root-prefix "$MAMBA_ROOT_PREFIX" > "$_mamba_cache" 2>/dev/null
+    fi
+    [[ -f "$_mamba_cache" ]] && source "$_mamba_cache"
+    [[ -d "$MAMBA_ROOT_PREFIX/envs/main" ]] && micromamba activate main
+    unset _mamba_cache
+fi
 # <<< mamba initialize <<<
 
-. "$HOME/.local/share/../bin/env"
+[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
+
+# Lazy-load NVM (loads on first use of nvm/node/npm/npx)
+if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
+    export NVM_DIR="${HOME}/.config/nvm"
+    [[ -d "$HOME/.nvm" ]] && export NVM_DIR="$HOME/.nvm"
+    nvm() {
+        unfunction nvm node npm npx 2>/dev/null
+        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+        nvm "$@"
+    }
+    node() { nvm && node "$@"; }
+    npm() { nvm && npm "$@"; }
+    npx() { nvm && npx "$@"; }
+fi
+
+zstyle ':completion:*' menu select
+# Source workflow functions
+[[ -f ~/dotfiles/zshrc.local ]] && source ~/dotfiles/zshrc.local

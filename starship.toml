@@ -1,0 +1,49 @@
+# Risto-style prompt: (env) user@host:path ‹branch› $
+format = "$conda[${username}@${hostname}:](blue)$directory$git_branch$character"
+
+[conda]
+format = "[\\($environment\\)]($style) "
+style = "green"
+symbol = ""
+ignore_base = false
+
+[username]
+format = "[$user]($style)"
+style_user = "blue"
+style_root = "red"
+show_always = true
+
+[hostname]
+format = "[$hostname]($style)"
+style = "blue"
+ssh_only = false
+
+[directory]
+format = "[$path]($style) "
+style = "bold yellow"
+truncation_length = 2
+truncate_to_repo = false
+
+[git_branch]
+format = "[‹$branch›]($style) "
+style = "red"
+
+[character]
+success_symbol = "[\\$](white)"
+error_symbol = "[\\$](red)"
+
+# Disable things risto doesn't show
+[git_status]
+disabled = true
+
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[cmd_duration]
+disabled = true

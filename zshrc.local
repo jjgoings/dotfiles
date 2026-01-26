@@ -1,0 +1,140 @@
+# Workflow automation for organized system
+# Created: 2025-11-26
+
+# Navigation shortcuts
+alias proj='cd ~/projects'
+alias clients='cd ~/projects/clients'
+alias research='cd ~/projects/research'
+alias work='cd ~/work'
+
+# Fuzzy project finder
+pf() {
+    local selected=$(fd --type d --max-depth 3 . ~/projects ~/work \
+        --exclude node_modules --exclude .git \
+        | fzf --preview 'eza --tree --level=2 {}' 2>/dev/null || \
+          fd --type d --max-depth 3 . ~/projects ~/work \
+        --exclude node_modules --exclude .git \
+        | fzf --preview 'ls -la {}')
+    [[ -n $selected ]] && cd "$selected"
+}
+
+# Smart project search
+p() {
+    if [[ -z "${1:-}" ]]; then
+        echo "Usage: p <name>"
+        return 1
+    fi
+
+    local -a matches
+    matches=("${(@f)$(fd --type d --max-depth 4 . ~/projects ~/work | grep -i "$1")}")
+    local count=${#matches[@]}
+
+    if (( count == 0 )); then
+        echo "No projects found matching: $1"
+    elif (( count == 1 )); then
+        cd -- "$matches[1]"
+    else
+        local selected
+        selected=$(printf "%s\n" "${matches[@]}" | fzf)
+        [[ -n $selected ]] && cd -- "$selected"
+    fi
+}
+
+# Archive old Desktop files
+archive-desktop() {
+    local days=${1:-30}
+    local archive_dir=~/archive/desktop/$(date +%Y-%m-%d)
+
+    echo "Archiving Desktop files older than $days days..."
+    mkdir -p "$archive_dir"
+
+    find ~/Desktop -maxdepth 1 -type f -mtime +$days -exec mv {} "$archive_dir/" \;
+    echo "✓ Archived to: $archive_dir"
+}
+
+# Archive old Downloads
+archive-downloads() {
+    local days=${1:-30}
+    local archive_dir=~/archive/downloads/$(date +%Y-%m-%d)
+
+    echo "Archiving Downloads older than $days days..."
+    mkdir -p "$archive_dir"
+
+    find ~/Downloads -maxdepth 1 -type f -mtime +$days -exec mv {} "$archive_dir/" \;
+    echo "✓ Archived to: $archive_dir"
+}
+
+# Weekly maintenance
+weekly-maintenance() {
+    echo "=== Weekly Maintenance ==="
+
+    archive-desktop 30
+    archive-downloads 30
+
+    echo ""
+    echo "Current state:"
+    echo "Desktop: $(ls ~/Desktop 2>/dev/null | wc -l) items"
+    echo "Downloads: $(ls ~/Downloads 2>/dev/null | wc -l) items"
+    echo ""
+
+    # Show projects with uncommitted changes
+    echo "Projects with uncommitted changes:"
+    fd --type d --hidden -name .git ~/projects ~/work \
+        | while read git_dir; do
+            cd "$(dirname "$git_dir")"
+            if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+                echo "  - $(basename $(pwd))"
+            fi
+        done
+
+    echo "✓ Weekly maintenance complete"
+}
+
+# Organization health check
+org-metrics() {
+    echo "=== Organization Health ==="
+
+    local home_dirs=$(ls -1d ~/*/ 2>/dev/null | wc -l)
+    local desktop_items=$(ls ~/Desktop 2>/dev/null | wc -l)
+    local downloads_items=$(ls ~/Downloads 2>/dev/null | wc -l)
+
+    echo "Home directories: $home_dirs (target: <40)"
+    echo "Desktop items: $desktop_items (target: <30)"
+    echo "Downloads items: $downloads_items (target: <20)"
+
+    # Health score
+    local score=100
+    [[ $home_dirs -gt 40 ]] && ((score -= 15))
+    [[ $desktop_items -gt 30 ]] && ((score -= 20))
+    [[ $downloads_items -gt 20 ]] && ((score -= 15))
+
+    echo ""
+    echo "Health Score: $score/100"
+    [[ $score -ge 90 ]] && echo "Status: ✓ Excellent"
+    [[ $score -ge 75 && $score -lt 90 ]] && echo "Status: ⚠ Good"
+    [[ $score -lt 75 ]] && echo "Status: ✗ Needs attention"
+}
+
+# Quick git shortcuts
+alias qc='git add -A && git commit -m'
+alias qp='git push origin $(git rev-parse --abbrev-ref HEAD 2>/dev/null)'
+
+# Help
+workflow-help() {
+    cat << 'HELP'
+NAVIGATION
+  proj, clients, research, work  - Quick directory jumps
+  p <name>                       - Find project by name
+  pf                             - Fuzzy find projects
+
+MAINTENANCE
+  archive-desktop [days]     - Archive old Desktop files
+  archive-downloads [days]   - Archive old Downloads
+  weekly-maintenance         - Full cleanup routine
+  org-metrics               - Check organization health
+
+GIT
+  qc <message>          - Quick commit
+  qp                    - Quick push
+HELP
+}

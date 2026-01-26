@@ -7,21 +7,22 @@ set -eo pipefail
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly DOTFILES_DIR="$HOME/dotfiles"
 readonly BACKUP_DIR="$HOME/dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
-readonly OH_MY_ZSH_DIR="$HOME/.oh-my-zsh"
 
 # Configuration mapping: source_file:target_location
 readonly CONFIG_MAPPINGS=(
     "bashrc:.bashrc"
-    "vimrc:.vimrc" 
+    "vimrc:.vimrc"
     "vim:.vim"
     "zshenv:.zshenv"
     "zshrc:.zshrc"
+    "zshrc.local:.zshrc.local"
     "Xresources:.Xresources"
     "private:.private"
     "matplotlibrc:.matplotlib/matplotlibrc"
     "gitconfig:.gitconfig"
     "tmux.conf:.tmux.conf"
     "ripgreprc:.ripgreprc"
+    "starship.toml:.config/starship.toml"
 )
 
 # Logging functions
@@ -155,67 +156,64 @@ create_symlinks() {
     done
 }
 
-# Install and configure oh-my-zsh
-# Enhanced oh-my-zsh setup function - replace existing function in makesymlinks.sh
+# Install shell tools (starship, zoxide, zsh plugins)
+setup_shell_tools() {
+    local platform="$1"
+    log_info "Installing shell tools (starship, zoxide, zsh plugins)"
 
-setup_oh_my_zsh() {
-    if [[ -d "$OH_MY_ZSH_DIR" ]]; then
-        log_info "oh-my-zsh already installed, checking plugins"
-    else
-        log_info "Installing oh-my-zsh"
-        # Install oh-my-zsh without running it immediately
-        RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-        
-        if [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
-            log_error "oh-my-zsh installation failed"
-            return 1
-        fi
-    fi
-    
-    # Ensure custom plugins directory exists
-    local custom_plugins="$OH_MY_ZSH_DIR/custom/plugins"
-    mkdir -p "$custom_plugins"
-    
-    # Install zsh-syntax-highlighting
-    if [[ ! -d "$custom_plugins/zsh-syntax-highlighting" ]]; then
-        log_info "Installing zsh-syntax-highlighting plugin"
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$custom_plugins/zsh-syntax-highlighting"
-        if [[ $? -eq 0 ]]; then
-            log_info "✓ zsh-syntax-highlighting installed"
-        else
-            log_error "✗ Failed to install zsh-syntax-highlighting"
-        fi
-    else
-        log_info "✓ zsh-syntax-highlighting already installed"
-    fi
-    
-    # Install zsh-autosuggestions  
-    if [[ ! -d "$custom_plugins/zsh-autosuggestions" ]]; then
-        log_info "Installing zsh-autosuggestions plugin"
-        git clone https://github.com/zsh-users/zsh-autosuggestions.git "$custom_plugins/zsh-autosuggestions"
-        if [[ $? -eq 0 ]]; then
-            log_info "✓ zsh-autosuggestions installed"
-        else
-            log_error "✗ Failed to install zsh-autosuggestions"
-        fi
-    else
-        log_info "✓ zsh-autosuggestions already installed"
-    fi
-    
-    # Verify plugins are accessible
-    log_info "Verifying plugin installation"
-    for plugin in "zsh-syntax-highlighting" "zsh-autosuggestions"; do
-        local plugin_path="$custom_plugins/$plugin"
-        if [[ -d "$plugin_path" && -f "$plugin_path/${plugin}.zsh" ]]; then
-            log_info "✓ $plugin verified"
-        elif [[ -d "$plugin_path" && -f "$plugin_path/${plugin}.plugin.zsh" ]]; then
-            log_info "✓ $plugin verified"
-        else
-            log_warn "✗ $plugin installation may be incomplete"
-            log_info "Expected: $plugin_path"
-            log_info "Contents: $(ls -la "$plugin_path" 2>/dev/null || echo 'Directory not found')"
-        fi
-    done
+    case "$platform" in
+        macos)
+            if command -v brew >/dev/null 2>&1; then
+                local tools=(starship zoxide zsh-syntax-highlighting zsh-autosuggestions)
+                for tool in "${tools[@]}"; do
+                    if ! brew list "$tool" >/dev/null 2>&1; then
+                        log_info "Installing $tool"
+                        brew install "$tool" || log_warn "Failed to install $tool"
+                    else
+                        log_info "✓ $tool already installed"
+                    fi
+                done
+            else
+                log_warn "Homebrew not found. Install starship, zoxide, zsh-syntax-highlighting, zsh-autosuggestions manually"
+            fi
+            ;;
+        debian)
+            # Install starship
+            if ! command -v starship >/dev/null 2>&1; then
+                log_info "Installing starship"
+                curl -sS https://starship.rs/install.sh | sh -s -- -y
+            fi
+            # Install zoxide
+            if ! command -v zoxide >/dev/null 2>&1; then
+                log_info "Installing zoxide"
+                curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+            fi
+            # Install zsh plugins via apt or git
+            if [[ ! -d /usr/share/zsh-syntax-highlighting ]]; then
+                sudo apt-get install -y zsh-syntax-highlighting || {
+                    log_info "Installing zsh-syntax-highlighting from git"
+                    sudo git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /usr/share/zsh-syntax-highlighting
+                }
+            fi
+            if [[ ! -d /usr/share/zsh-autosuggestions ]]; then
+                sudo apt-get install -y zsh-autosuggestions || {
+                    log_info "Installing zsh-autosuggestions from git"
+                    sudo git clone https://github.com/zsh-users/zsh-autosuggestions.git /usr/share/zsh-autosuggestions
+                }
+            fi
+            ;;
+        arch)
+            sudo pacman -S --noconfirm starship zoxide zsh-syntax-highlighting zsh-autosuggestions
+            ;;
+        *)
+            log_warn "Unknown platform. Install starship, zoxide, zsh-syntax-highlighting, zsh-autosuggestions manually"
+            ;;
+    esac
+
+    # Clear cached init scripts so they regenerate with new binaries
+    rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/starship_init.zsh"
+    rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/zoxide_init.zsh"
+    log_info "✓ Shell tools setup complete"
 }
 
 # Install modern CLI tools
@@ -420,6 +418,7 @@ verify_setup() {
         log_info "3. Customize ~/.local_zshrc for machine-specific settings"
         log_info "4. Add private configs to ~/.private"
         log_info "5. In tmux, press 'prefix + I' to install plugins"
+        log_info "6. Edit ~/.config/starship.toml to customize your prompt"
     else
         log_error "Setup completed with $errors errors"
         return 1
@@ -445,7 +444,7 @@ main() {
     
     # Install dependencies
     setup_zsh "$platform"
-    setup_oh_my_zsh
+    setup_shell_tools "$platform"
     install_modern_tools "$platform"
     
     # Setup additional tools
