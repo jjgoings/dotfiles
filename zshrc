@@ -136,19 +136,49 @@ fi
 # Cargo env (if installed via rustup)
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
-# Lazy-load NVM (loads on first use of nvm/node/npm/npx)
+# Lazy-load NVM (auto-wraps all binaries in default node's bin directory)
 if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
     export NVM_DIR="${HOME}/.config/nvm"
     [[ -d "$HOME/.nvm" ]] && export NVM_DIR="$HOME/.nvm"
-    nvm() {
-        unfunction nvm node npm npx 2>/dev/null
+
+    # Find default node bin directory without loading nvm
+    _nvm_default_bin=""
+    if [[ -f "$NVM_DIR/alias/default" ]]; then
+        _nvm_default_version=$(<"$NVM_DIR/alias/default")
+        # Resolve version alias to actual version directory
+        for d in "$NVM_DIR/versions/node/"*"${_nvm_default_version}"*; do
+            [[ -d "$d/bin" ]] && _nvm_default_bin="$d/bin" && break
+        done
+    fi
+
+    # Core nvm loader function
+    _nvm_load() {
+        (( ${+_nvm_loaded} )) && return 0
+        # Unfunction all wrapped commands
+        for cmd in "${_nvm_wrapped_cmds[@]}"; do
+            unfunction "$cmd" 2>/dev/null
+        done
+        unfunction nvm 2>/dev/null
         [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
         [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
-        nvm "$@"
+        _nvm_loaded=1
     }
-    node() { nvm && node "$@"; }
-    npm() { nvm && npm "$@"; }
-    npx() { nvm && npx "$@"; }
+
+    nvm() { _nvm_load && nvm "$@"; }
+
+    # Create lazy wrappers for all executables in default node bin
+    _nvm_wrapped_cmds=()
+    if [[ -n "$_nvm_default_bin" && -d "$_nvm_default_bin" ]]; then
+        for bin in "$_nvm_default_bin"/*; do
+            [[ -x "$bin" ]] || continue
+            cmd="${bin:t}"
+            [[ "$cmd" == "nvm" ]] && continue
+            _nvm_wrapped_cmds+=("$cmd")
+            eval "$cmd() { _nvm_load && $cmd \"\$@\"; }"
+        done
+    fi
+
+    unset _nvm_default_version _nvm_default_bin
 fi
 
 # Source workflow functions (portable, in repo)
