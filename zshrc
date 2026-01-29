@@ -89,6 +89,8 @@ bindkey "^[[A" up-line-or-beginning-search    # Up arrow
 bindkey "^[[B" down-line-or-beginning-search  # Down arrow
 bindkey "^P" up-line-or-beginning-search      # Ctrl-P
 bindkey "^N" down-line-or-beginning-search    # Ctrl-N
+bindkey "^A" beginning-of-line                # Ctrl-A
+bindkey "^E" end-of-line                      # Ctrl-E
 
 # Prompt (starship - async git, fast)
 if command -v starship >/dev/null 2>&1; then
