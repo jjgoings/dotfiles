@@ -55,17 +55,11 @@ fi
 
 # Modern CLI aliases (only if tools are installed)
 command -v bat >/dev/null 2>&1 && alias cat='bat'
-command -v rg >/dev/null 2>&1 && alias grep='rg'
 command -v fd >/dev/null 2>&1 && alias find='fd'
 
-if command -v eza >/dev/null 2>&1; then
-    alias ls='eza --color=auto --group-directories-first'
-    alias ll='eza -la --color=auto --group-directories-first'
-    alias lt='eza --tree --color=auto'
-else
-    alias ls="ls --color=auto -Gh"
-    alias ll="ls -la"
-fi
+alias ls='ls --color=auto -Gh'
+alias ll='ls -la'
+command -v eza >/dev/null 2>&1 && alias lt='eza --tree --color=auto'
 
 # Shell functions
 # Note: qfind uses /usr/bin/find explicitly since 'find' may be aliased to fd

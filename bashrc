@@ -47,16 +47,11 @@ set completion-ignore-case on
 # 02. Aliases                                                                #
 ##############################################################################
 # Modern CLI aliases (only if tools are installed)
-if command -v eza >/dev/null 2>&1; then
-    alias ls='eza --color=auto --group-directories-first'
-    alias ll='eza -la --color=auto --group-directories-first'
-else
-    alias ls="ls --color=auto -Gh"
-    alias ll="ls -la"
-fi
+alias ls='ls --color=auto -Gh'
+alias ll='ls -la'
+command -v eza >/dev/null 2>&1 && alias lt='eza --tree --color=auto'
 
 command -v bat >/dev/null 2>&1 && alias cat='bat'
-command -v rg >/dev/null 2>&1 && alias grep='rg'
 
 ##############################################################################
 # 03. Theme/Colors                                                           #
