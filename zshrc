@@ -40,8 +40,10 @@ fi
 # Google Cloud SDK (if installed)
 [[ -f "$HOME/opt/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/opt/google-cloud-sdk/path.zsh.inc"
 
-# FZF configuration
-export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line"
+# FZF configuration (colors match theme)
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line \
+--color=fg:#a0a0a0,bg:-1,hl:#5fafaf,fg+:#d0d0d0,bg+:#303030,hl+:#5fafaf \
+--color=info:#d7af5f,prompt:#5f87af,pointer:#d78787,marker:#d78787,spinner:#5fafaf"
 export FZF_COMPLETION_TRIGGER='**'
 
 if command -v fzf >/dev/null 2>&1; then
@@ -115,6 +117,38 @@ done
 for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins "$HOME/.zsh/plugins"; do
     [[ -f "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$p/zsh-autosuggestions/zsh-autosuggestions.zsh" && break
 done
+
+# ─────────────────────────────────────────────────────────────
+# Color theme (muted, colorblind-friendly - matches starship)
+# ─────────────────────────────────────────────────────────────
+# Palette: steel-blue(67) teal(73) amber(179) coral(174) gray(248)
+
+# Syntax highlighting styles (must be after plugin load)
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[command]='fg=73'              # teal - valid commands
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=73'              # teal - builtins (cd, echo)
+ZSH_HIGHLIGHT_STYLES[alias]='fg=73'                # teal - aliases
+ZSH_HIGHLIGHT_STYLES[function]='fg=73'             # teal - functions
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=174'       # coral - unknown/invalid
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=67'        # steel-blue - if/then/else
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=179'  # amber - strings
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=179'  # amber - strings
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=179'  # amber - $'strings'
+ZSH_HIGHLIGHT_STYLES[path]='underline'             # underline paths
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=67'             # steel-blue - wildcards
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=67'    # steel-blue - !commands
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=248' # gray - short flags
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=248' # gray - long flags
+ZSH_HIGHLIGHT_STYLES[comment]='fg=240'             # dim gray - comments
+
+# Autosuggestions color (dimmed)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+
+# LS_COLORS for GNU ls, eza, fd, etc.
+export LS_COLORS="di=1;38;5;67:ln=38;5;179:so=38;5;174:pi=38;5;179:ex=38;5;73:bd=38;5;67:cd=38;5;67:su=38;5;174:sg=38;5;174:tw=1;38;5;67:ow=1;38;5;67:*.tar=38;5;174:*.gz=38;5;174:*.zip=38;5;174:*.jpg=38;5;179:*.png=38;5;179:*.mp3=38;5;73:*.mp4=38;5;73"
+
+# LSCOLORS for BSD ls (macOS) - same palette mapped to BSD format
+export LSCOLORS="ExGxfxdxCxDxDxhbhDhChx"
 
 # Micromamba/conda (if installed)
 if [[ -x "$HOME/.local/bin/micromamba" ]]; then
