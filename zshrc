@@ -150,8 +150,20 @@ export LS_COLORS="di=1;38;5;67:ln=38;5;179:so=38;5;174:pi=38;5;179:ex=38;5;73:bd
 # LSCOLORS for BSD ls (macOS) - same palette mapped to BSD format
 export LSCOLORS="ExGxfxdxCxDxDxhbhDhChx"
 
-# Micromamba/conda (if installed)
-if [[ -x "$HOME/.local/bin/micromamba" ]]; then
+# Conda/Mamba (miniforge or micromamba)
+# Let starship handle env display, not conda's PS1 modification
+export CONDA_CHANGEPS1=false
+
+if [[ -d "$HOME/miniforge3" ]]; then
+    # Miniforge (conda-forge based, includes mamba)
+    _conda_cache="${XDG_CACHE_HOME:-$HOME/.cache}/conda_init.zsh"
+    if [[ ! -f "$_conda_cache" || "$HOME/miniforge3/bin/conda" -nt "$_conda_cache" ]]; then
+        "$HOME/miniforge3/bin/conda" shell.zsh hook > "$_conda_cache" 2>/dev/null
+    fi
+    [[ -f "$_conda_cache" ]] && source "$_conda_cache"
+    unset _conda_cache
+elif [[ -x "$HOME/.local/bin/micromamba" ]]; then
+    # Fallback to micromamba
     export MAMBA_EXE="$HOME/.local/bin/micromamba"
     export MAMBA_ROOT_PREFIX="$HOME/micromamba"
     _mamba_cache="${XDG_CACHE_HOME:-$HOME/.cache}/mamba_hook.zsh"
