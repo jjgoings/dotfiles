@@ -1,6 +1,10 @@
 # Workflow automation and helpers
 # Portable functions that work on any machine
 
+# Autosuggestion acceptance:
+#   Right arrow / End - accept full suggestion (zsh-autosuggestions default)
+#   Up/Down arrow     - search history by typed prefix (configured in zshrc)
+
 # ┌──────────────────────────────────────────────────────────┐
 # │ Secret management                                         │
 # └──────────────────────────────────────────────────────────┘

@@ -81,8 +81,10 @@ compinit
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search    # Up arrow
-bindkey "^[[B" down-line-or-beginning-search  # Down arrow
+bindkey "^[[A" up-line-or-beginning-search    # Up arrow (xterm)
+bindkey "^[[B" down-line-or-beginning-search  # Down arrow (xterm)
+bindkey "^[OA" up-line-or-beginning-search    # Up arrow (application mode)
+bindkey "^[OB" down-line-or-beginning-search  # Down arrow (application mode)
 bindkey "^P" up-line-or-beginning-search      # Ctrl-P
 bindkey "^N" down-line-or-beginning-search    # Ctrl-N
 bindkey "^A" beginning-of-line                # Ctrl-A

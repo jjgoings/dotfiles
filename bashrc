@@ -35,13 +35,17 @@ fi
 # History configuration
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000000
+shopt -s histappend
 
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
-bind '"\e[C": forward-char'
-bind '"\e[D": backward-char'
-set show-all-if-ambiguous on
-set completion-ignore-case on
+# Only set up keybindings in interactive shells
+if [[ $- == *i* ]]; then
+    bind '"\e[A": history-search-backward'
+    bind '"\e[B": history-search-forward'
+    bind '"\e[C": forward-char'
+    bind '"\e[D": backward-char'
+    bind 'set show-all-if-ambiguous on'
+    bind 'set completion-ignore-case on'
+fi
 
 ##############################################################################
 # 02. Aliases                                                                #
@@ -67,6 +71,7 @@ export LSCOLORS=Gxfxcxdxbxegedabagacad
 if [[ -x "$HOME/.local/bin/micromamba" ]]; then
     export MAMBA_EXE="$HOME/.local/bin/micromamba"
     export MAMBA_ROOT_PREFIX="$HOME/micromamba"
+    export CONDA_CHANGEPS1=false
     eval "$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2>/dev/null)"
     [[ -d "$MAMBA_ROOT_PREFIX/envs/main" ]] && micromamba activate main
 fi
