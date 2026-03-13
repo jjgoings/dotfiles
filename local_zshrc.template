@@ -2,7 +2,6 @@
 # Non-secret settings, paths, and tools for this machine
 #
 # SECRETS (API keys, tokens) go in ~/.private
-# Add secrets with: add-secret VAR_NAME "value"
 # ─────────────────────────────────────────────────────────────
 
 # ┌──────────────────────────────────────────────────────────┐

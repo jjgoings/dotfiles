@@ -290,9 +290,6 @@ codex() {
     fi
 }
 
-# Source workflow functions (portable, in repo)
-[[ -f ~/dotfiles/zshrc.local ]] && source ~/dotfiles/zshrc.local
-
 # Auto-attach to zellij only on machines that opt in via ~/.local_zshrc
 if [[ "${ENABLE_AUTO_ZELLIJ:-0}" == "1" ]] && command -v zellij &>/dev/null \
     && [[ -z "$ZELLIJ" ]] && [[ -o interactive ]] \
