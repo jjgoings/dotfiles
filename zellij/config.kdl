@@ -10,7 +10,7 @@ serialize_pane_viewport false
 scrollback_lines_to_serialize 100000
 
 themes {
-    rainbow {
+    custom {
         fg "#d8dee9"
         bg "#1c1f26"
         black "#353b45"
@@ -19,10 +19,10 @@ themes {
         yellow "#ffd166"
         blue "#5ea1ff"
         magenta "#c792ea"
-        cyan "#8db9ff"
+        cyan "#a0a8c0"
         white "#eef2ff"
         orange "#ff9f43"
     }
 }
 
-theme "rainbow"
+theme "custom"

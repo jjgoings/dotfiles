@@ -37,8 +37,46 @@ set ofu=syntaxcomplete#Complete
 " 03. Theme/Colors                                                           "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set t_Co=256              " enable 256-color mode.
+if has('termguicolors')
+  set termguicolors
+endif
 syntax enable             " enable syntax highlighting (previously syntax on).
+let g:tokyonight_style = 'night'
+
+function! s:ApplyTokyonightOverrides() abort
+  highlight Normal guifg=#ddd3cf guibg=#2b2d31 ctermfg=252 ctermbg=236
+  highlight Terminal guifg=#ddd3cf guibg=#2b2d31 ctermfg=252 ctermbg=236
+  highlight EndOfBuffer guifg=#2b2d31 guibg=#2b2d31 ctermfg=236 ctermbg=236
+  highlight FoldColumn guifg=#85777f guibg=#24262a ctermfg=243 ctermbg=235
+  highlight Folded guifg=#85777f guibg=#24262a ctermfg=243 ctermbg=235
+  highlight SignColumn guifg=#ddd3cf guibg=#24262a ctermfg=252 ctermbg=235
+  highlight LineNr guifg=#85777f guibg=#2b2d31 ctermfg=243 ctermbg=236
+  highlight CursorLineNr guifg=#ddd3cf guibg=#33353a ctermfg=252 ctermbg=237
+  highlight CursorLine guibg=#33353a ctermbg=237
+  highlight CursorColumn guibg=#33353a ctermbg=237
+  highlight ColorColumn guibg=#33353a ctermbg=237
+  highlight VertSplit guifg=#24262a guibg=#2b2d31 ctermfg=235 ctermbg=236
+  highlight WinSeparator guifg=#24262a guibg=#2b2d31 ctermfg=235 ctermbg=236
+  highlight StatusLine guifg=#ddd3cf guibg=#33353a ctermfg=252 ctermbg=237
+  highlight StatusLineNC guifg=#85777f guibg=#24262a ctermfg=243 ctermbg=235
+  highlight NormalFloat guifg=#ddd3cf guibg=#24262a ctermfg=252 ctermbg=235
+  highlight Pmenu guifg=#ddd3cf guibg=#24262a ctermfg=252 ctermbg=235
+  highlight PmenuSel guifg=#2b2d31 guibg=#98c379 ctermfg=236 ctermbg=114
+  highlight Comment term=NONE guifg=#85777f ctermfg=243 gui=italic cterm=italic
+  highlight Delimiter term=NONE guifg=#85777f ctermfg=243 gui=NONE cterm=NONE
+  highlight Operator term=NONE guifg=#85777f ctermfg=243 gui=NONE cterm=NONE
+  highlight Type term=NONE guifg=#78a9ff ctermfg=111 gui=NONE cterm=NONE
+  highlight Typedef term=NONE guifg=#78a9ff ctermfg=111 gui=NONE cterm=NONE
+  highlight StorageClass term=NONE guifg=#78a9ff ctermfg=111 gui=NONE cterm=NONE
+endfunction
+
+augroup goings_tokyonight
+  au!
+  autocmd ColorScheme tokyonight call s:ApplyTokyonightOverrides()
+augroup END
+
 colorscheme tokyonight    " set colorscheme
+call s:ApplyTokyonightOverrides()
 
 " Highlight Python indentation errors
 autocmd FileType python highlight PythonIndentError ctermbg=red guibg=red
@@ -63,9 +101,9 @@ au BufReadPost *.dat set syntax=python
 " Highlight characters that go over 80 columns (by drawing a border on the 81st)
 if exists('+colorcolumn')
   set colorcolumn=121
-  highlight ColorColumn ctermbg=red
+  highlight ColorColumn guibg=#33353a ctermbg=237
 else
-  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+  highlight OverLength ctermfg=NONE ctermbg=237 guibg=#33353a
   match OverLength /\%81v.\+/
 endif
 
@@ -192,9 +230,6 @@ Plug 'vim-airline/vim-airline-themes'
 " Language support
 Plug 'sheerun/vim-polyglot'
 
-" Code quality
-Plug 'dense-analysis/ale'
-
 " Documentation generator (optional)
 " Plug 'kkoomen/vim-doge', { 'do': 'npm i --no-save && npm run build:binary:unix' }
 
@@ -215,31 +250,65 @@ nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>g :Rg<CR>
 nnoremap <leader>l :Lines<CR>
 
-" ALE configuration
-let g:ale_enabled = 0  " ALE off by default -- toggle with :ALEToggle
-let g:ale_sign_column_always = 1
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚠'
-
 " Airline configuration
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#ale#enabled = 1
 let g:airline_powerline_fonts = 0
-let g:airline_theme = 'minimalist'                " Subtle gray theme
 
-" Remove git clutter from status bar
+function! GoingsAirlinePatch(palette) abort
+  let l:section_b = [ '#ddd3cf', '#33353a', 252, 237 ]
+  let l:section_c = [ '#85777f', '#2b2d31', 243, 236 ]
+  let l:inactive = [ '#85777f', '#24262a', 243, 235 ]
+
+  let a:palette.normal = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#98c379', 236, 114, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.insert = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#ff9f43', 236, 215, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.visual = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#5ea1ff', 236, 75, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.replace = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#ff6b6b', 236, 203, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.commandline = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#c792ea', 236, 176, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.terminal = airline#themes#generate_color_map(
+        \ [ '#2b2d31', '#c792ea', 236, 176, 'bold' ],
+        \ l:section_b,
+        \ l:section_c)
+  let a:palette.inactive = airline#themes#generate_color_map(l:inactive, l:inactive, l:inactive)
+  let a:palette.accents = extend(get(a:palette, 'accents', {}), {
+        \ 'red': [ '#ff6b6b', '', 203, '' ],
+        \ 'green': [ '#98c379', '', 114, '' ],
+        \ 'blue': [ '#5ea1ff', '', 75, '' ],
+        \ 'orange': [ '#ff9f43', '', 215, '' ],
+        \ 'purple': [ '#c792ea', '', 176, '' ],
+        \ }, 'force')
+endfunction
+
+let g:airline_theme = 'minimalist'
+let g:airline_theme_patch_func = 'GoingsAirlinePatch'
+
+" Keep git noise low but retain location context
 let g:airline#extensions#hunks#enabled = 0        " Remove +0 ~3 -0
-let g:airline#extensions#branch#enabled = 0       " Remove branch name
+let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#gitgutter#enabled = 0    " Remove git indicators
 
-" Clean up the status sections
-" " Minimal status bar - just position info on the right
-let g:airline_section_a = ''                      " Remove mode (NORMAL)
-let g:airline_section_b = ''                      " Remove git info
-let g:airline_section_c = ''                      " Remove filename
-let g:airline_section_x = ''                      " Remove filetype
-let g:airline_section_y = ''                      " Remove encoding info
-let g:airline_section_z = '%p%% %l/%L:%c'         " Clean position: 93% 228/244:20
+let g:airline_section_a = airline#section#create(['mode'])
+let g:airline_section_b = airline#section#create(['branch'])
+let g:airline_section_c = airline#section#create(['readonly', 'filename'])
+let g:airline_section_x = ''
+let g:airline_section_y = ''
+let g:airline_section_z = '%p%% L:%l C:%c'
+let g:airline_section_error = ''
+let g:airline_section_warning = ''
 
 " GitGutter configuration
 set updatetime=100
