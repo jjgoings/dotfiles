@@ -42,8 +42,8 @@ fi
 
 # FZF configuration (colors match theme)
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line \
---color=fg:#a0a0a0,bg:-1,hl:#5fafaf,fg+:#d0d0d0,bg+:#303030,hl+:#5fafaf \
---color=info:#d7af5f,prompt:#5f87af,pointer:#d78787,marker:#d78787,spinner:#5fafaf"
+--color=fg:#d8dee9,bg:-1,hl:#c792ea,fg+:#eef2ff,bg+:#353b45,hl+:#c792ea \
+--color=info:#ffd166,prompt:#5ea1ff,pointer:#ff6b6b,marker:#c792ea,spinner:#98c379"
 export FZF_COMPLETION_TRIGGER='**'
 
 if command -v fzf >/dev/null 2>&1; then
@@ -54,6 +54,44 @@ if command -v fzf >/dev/null 2>&1; then
     fi
     [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 fi
+
+_zellij_termius_config() {
+    local src dst
+    src="$HOME/.config/zellij/config.kdl"
+    dst="${XDG_CACHE_HOME:-$HOME/.cache}/zellij/config-termius.kdl"
+
+    mkdir -p "${dst:h}"
+    if [[ ! -f "$dst" || "$src" -nt "$dst" ]]; then
+        awk '
+            /^mouse_mode[[:space:]]+/ { print "mouse_mode false"; mouse=1; next }
+            /^advanced_mouse_actions[[:space:]]+/ { print "advanced_mouse_actions false"; advanced=1; next }
+            { print }
+            END {
+                if (!mouse) print "mouse_mode false"
+                if (!advanced) print "advanced_mouse_actions false"
+            }
+        ' "$src" > "$dst"
+    fi
+
+    printf "%s\n" "$dst"
+}
+
+zellij() {
+    if [[ "$TERM_PROGRAM" == "Termius" || -n "$TERMIUS_APP_VERSION" ]]; then
+        local cfg
+        cfg="$(_zellij_termius_config)" || return $?
+        ZELLIJ_CONFIG_FILE="$cfg" command zellij "$@"
+    else
+        command zellij "$@"
+    fi
+}
+
+# Obsidian vault — Claude Code in Zellij
+work-tasks() {
+    [[ -n "$ZELLIJ" ]] && zellij action rename-tab "work-tasks"
+    (cd "/Users/goings/Library/CloudStorage/GoogleDrive-goings@ionq.co/My Drive/work-tasks" && claude --dangerously-skip-permissions)
+    [[ -n "$ZELLIJ" ]] && zellij action undo-rename-tab
+}
 
 # Modern CLI aliases (only if tools are installed)
 command -v bat >/dev/null 2>&1 && alias cat='bat'
@@ -121,36 +159,40 @@ for p in /opt/homebrew/share /usr/local/share /usr/share /usr/share/zsh/plugins 
 done
 
 # ─────────────────────────────────────────────────────────────
-# Color theme (muted, colorblind-friendly - matches starship)
+# Color theme (muted shell syntax, colorful prompt)
 # ─────────────────────────────────────────────────────────────
-# Palette: steel-blue(67) teal(73) amber(179) coral(174) gray(248)
+# Palette: purple(133) green(150) olive(108) blue(68) red(167) gray(245)
 
 # Syntax highlighting styles (must be after plugin load)
 typeset -A ZSH_HIGHLIGHT_STYLES
-ZSH_HIGHLIGHT_STYLES[command]='fg=73'              # teal - valid commands
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=73'              # teal - builtins (cd, echo)
-ZSH_HIGHLIGHT_STYLES[alias]='fg=73'                # teal - aliases
-ZSH_HIGHLIGHT_STYLES[function]='fg=73'             # teal - functions
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=174'       # coral - unknown/invalid
-ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=67'        # steel-blue - if/then/else
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=179'  # amber - strings
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=179'  # amber - strings
-ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=179'  # amber - $'strings'
-ZSH_HIGHLIGHT_STYLES[path]='underline'             # underline paths
-ZSH_HIGHLIGHT_STYLES[globbing]='fg=67'             # steel-blue - wildcards
-ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=67'    # steel-blue - !commands
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=248' # gray - short flags
-ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=248' # gray - long flags
-ZSH_HIGHLIGHT_STYLES[comment]='fg=240'             # dim gray - comments
+ZSH_HIGHLIGHT_STYLES[command]='fg=150'             # green - valid commands
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=150'             # green - builtins (cd, echo)
+ZSH_HIGHLIGHT_STYLES[alias]='fg=150'               # green - aliases
+ZSH_HIGHLIGHT_STYLES[function]='fg=150'            # green - functions
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=150'                # green - command word fallback
+ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=150'      # green - hashed commands
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=133,underline' # royal purple - sudo/env/time
+ZSH_HIGHLIGHT_STYLES[autodirectory]='fg=108,underline' # olive - implicit cd targets
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=167'       # muted red - unknown/invalid
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=68'        # soft blue - if/then/else
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=179'  # warm gold - strings
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=179'  # warm gold - strings
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=179'  # warm gold - $'strings'
+ZSH_HIGHLIGHT_STYLES[path]='fg=108,underline'      # olive - paths
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=68'             # soft blue - wildcards
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=68'    # soft blue - !commands
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=245' # gray - short flags
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=245' # gray - long flags
+ZSH_HIGHLIGHT_STYLES[comment]='fg=242'             # dim gray - comments
 
 # Autosuggestions color (dimmed)
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
 
 # LS_COLORS for GNU ls, eza, fd, etc.
-export LS_COLORS="di=1;38;5;67:ln=38;5;179:so=38;5;174:pi=38;5;179:ex=38;5;73:bd=38;5;67:cd=38;5;67:su=38;5;174:sg=38;5;174:tw=1;38;5;67:ow=1;38;5;67:*.tar=38;5;174:*.gz=38;5;174:*.zip=38;5;174:*.jpg=38;5;179:*.png=38;5;179:*.mp3=38;5;73:*.mp4=38;5;73"
+export LS_COLORS="di=1;38;5;67:ln=38;5;139:so=38;5;139:pi=38;5;245:ex=1;38;5;150:bd=38;5;67:cd=38;5;67:su=38;5;167:sg=38;5;167:tw=1;38;5;67:ow=1;38;5;67"
 
 # LSCOLORS for BSD ls (macOS) - same palette mapped to BSD format
-export LSCOLORS="ExGxfxdxCxDxDxhbhDhChx"
+export LSCOLORS="ExFxFxDxCxExExBxBxExEx"
 
 # Conda/Mamba (miniforge or micromamba)
 # Let starship handle env display, not conda's PS1 modification
@@ -217,6 +259,7 @@ if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
             [[ -x "$bin" ]] || continue
             cmd="${bin:t}"
             [[ "$cmd" == "nvm" ]] && continue
+            [[ "$cmd" == "codex" ]] && continue
             _nvm_wrapped_cmds+=("$cmd")
             eval "$cmd() { _nvm_load && $cmd \"\$@\"; }"
         done
@@ -225,5 +268,35 @@ if [[ -d "$HOME/.config/nvm" || -d "$HOME/.nvm" ]]; then
     unset _nvm_default_version _nvm_default_bin
 fi
 
+codex() {
+    if (( ${+functions[_nvm_load]} )); then
+        _nvm_load || return $?
+    fi
+
+    local -a args
+    local arg
+    args=("$@")
+
+    for arg in "${args[@]}"; do
+        [[ "$arg" == "--no-alt-screen" ]] && { command codex "${args[@]}"; return $?; }
+    done
+
+    if [[ "$TERM_PROGRAM" == "Termius" || -n "$TERMIUS_APP_VERSION" ]]; then
+        command codex "${args[@]}"
+    elif [[ -n "$ZELLIJ" ]]; then
+        command codex --no-alt-screen "${args[@]}"
+    else
+        command codex "${args[@]}"
+    fi
+}
+
 # Source workflow functions (portable, in repo)
 [[ -f ~/dotfiles/zshrc.local ]] && source ~/dotfiles/zshrc.local
+
+# Auto-attach to zellij only on machines that opt in via ~/.local_zshrc
+if [[ "${ENABLE_AUTO_ZELLIJ:-0}" == "1" ]] && command -v zellij &>/dev/null \
+    && [[ -z "$ZELLIJ" ]] && [[ -o interactive ]] \
+    && [[ "$TERM_PROGRAM" != "vscode" ]] && [[ -z "$INSIDE_EMACS" ]]; then
+    # Don't wrap the client in `timeout`: it kills a healthy attached session.
+    zellij attach -c
+fi

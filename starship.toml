@@ -1,38 +1,37 @@
 # Risto-style prompt: (env) user@host:path ‹branch› $
-# Colorblind-friendly dark theme with muted, readable colors
 add_newline = false
-format = "$conda[${username}@${hostname}:](#5f87af)$directory$git_branch$character"
+format = "$conda$username[@](fg:#928374)$hostname[:](fg:#928374)$directory$git_branch$character"
 
 [conda]
 format = "[\\($environment\\)]($style) "
-style = "#5fafaf"
+style = "fg:#ff6b6b"
 symbol = ""
 ignore_base = false
 
 [username]
 format = "[$user]($style)"
-style_user = "#5f87af"
-style_root = "#d78787"
+style_user = "fg:#ff9f43"
+style_root = "fg:#ff6b6b"
 show_always = true
 
 [hostname]
 format = "[$hostname]($style)"
-style = "#5f87af"
+style = "fg:#ffd166"
 ssh_only = false
 
 [directory]
 format = "[$path]($style) "
-style = "bold #d7af5f"
+style = "fg:#98c379"
 truncation_length = 2
 truncate_to_repo = false
 
 [git_branch]
 format = "[‹$branch›]($style) "
-style = "#d78787"
+style = "fg:#5ea1ff"
 
 [character]
-success_symbol = "[\\$](#a0a0a0)"
-error_symbol = "[\\$](#d78787)"
+success_symbol = "[\\$](fg:#98c379)"
+error_symbol = "[\\$](fg:#ff6b6b)"
 
 # Disable things risto doesn't show
 [git_status]

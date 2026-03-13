@@ -24,6 +24,7 @@ readonly CONFIG_MAPPINGS=(
     "ripgreprc:.ripgreprc"
     "starship.toml:.config/starship.toml"
     "fzf.zsh:.fzf.zsh"
+    "zellij:.config/zellij"
 )
 
 # Logging functions

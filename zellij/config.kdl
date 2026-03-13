@@ -1,0 +1,28 @@
+// Keep Zellij close to stock behavior and let the terminal handle as much
+// scrolling/input behavior as possible. Device-specific mouse handling lives in
+// the zsh wrapper, which disables mouse mode only for Termius.
+
+simplified_ui true
+show_startup_tips false
+show_release_notes false
+scroll_buffer_size 100000
+serialize_pane_viewport false
+scrollback_lines_to_serialize 100000
+
+themes {
+    rainbow {
+        fg "#d8dee9"
+        bg "#1c1f26"
+        black "#353b45"
+        red "#ff6b6b"
+        green "#98c379"
+        yellow "#ffd166"
+        blue "#5ea1ff"
+        magenta "#c792ea"
+        cyan "#8db9ff"
+        white "#eef2ff"
+        orange "#ff9f43"
+    }
+}
+
+theme "rainbow"
