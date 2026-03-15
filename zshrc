@@ -22,8 +22,7 @@ setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicates first
 setopt HIST_IGNORE_DUPS          # Don't record duplicates
 setopt HIST_IGNORE_SPACE         # Don't record lines starting with space
 setopt HIST_VERIFY               # Show command before executing from history
-setopt SHARE_HISTORY             # Share history between sessions
-setopt INC_APPEND_HISTORY        # Add commands immediately
+setopt SHARE_HISTORY             # Share history between sessions and append immediately
 
 # SSH agent management
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
