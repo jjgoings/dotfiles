@@ -1,4 +1,6 @@
 local_zshrc
+private
+oh-my-zsh/
 .DS_Store
 vim/backup/
 vim/autoload/*.old
