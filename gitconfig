@@ -95,8 +95,6 @@
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
     required = true
-[credential]
-	helper = osxkeychain
 [difftool]
 	prompt = false
 
@@ -107,9 +105,3 @@
     navigate = true
     dark = true
     line-numbers = true
-[credential "https://github.com"]
-	helper = 
-	helper = !/Users/goings/.micromamba/envs/main/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/Users/goings/.micromamba/envs/main/bin/gh auth git-credential
