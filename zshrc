@@ -40,6 +40,9 @@ fi
 [[ -f "$HOME/opt/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/opt/google-cloud-sdk/path.zsh.inc"
 
 # FZF configuration (colors match theme)
+# Force Node.js to prefer IPv4 (Pi has no working IPv6 egress)
+export NODE_OPTIONS="--dns-result-order=ipv4first"
+
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line \
 --color=fg:#d8dee9,bg:-1,hl:#c792ea,fg+:#eef2ff,bg+:#353b45,hl+:#c792ea \
 --color=info:#ffd166,prompt:#5ea1ff,pointer:#ff6b6b,marker:#c792ea,spinner:#98c379"
@@ -280,8 +283,11 @@ codex() {
         [[ "$arg" == "--no-alt-screen" ]] && { command codex "${args[@]}"; return $?; }
     done
 
-    if [[ "$TERM_PROGRAM" == "Termius" || -n "$TERMIUS_APP_VERSION" ]]; then
-        command codex "${args[@]}"
+    # Many SSH clients, including Termius, do not forward a client-specific
+    # identifier into the remote shell. Prefer inline mode for all SSH sessions
+    # so scrollback remains usable.
+    if [[ -n "$SSH_TTY" || "$TERM_PROGRAM" == "Termius" || -n "$TERMIUS_APP_VERSION" ]]; then
+        command codex --no-alt-screen "${args[@]}"
     elif [[ -n "$ZELLIJ" ]]; then
         command codex --no-alt-screen "${args[@]}"
     else
