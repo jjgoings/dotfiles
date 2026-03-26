@@ -227,8 +227,9 @@ Plug 'tpope/vim-commentary'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" Language support
+" Language support and linting
 Plug 'sheerun/vim-polyglot'
+Plug 'dense-analysis/ale'
 
 " Documentation generator (optional)
 " Plug 'kkoomen/vim-doge', { 'do': 'npm i --no-save && npm run build:binary:unix' }

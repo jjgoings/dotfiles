@@ -4,6 +4,7 @@ oh-my-zsh/
 .DS_Store
 vim/backup/
 vim/autoload/*.old
+vim/pack/
 vim/plugged/
 vim/swap/
 vim/undodir/
