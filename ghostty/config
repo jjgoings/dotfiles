@@ -1,0 +1,58 @@
+# Ghostty config -- optimized for zellij-first workflow
+
+# Font
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+
+# Window -- no native tabs/splits since zellij handles that
+window-decoration = true
+macos-titlebar-style = tabs
+window-padding-x = 4
+window-padding-y = 4
+
+# Match zellij custom theme colors
+background = 1c1f26
+foreground = d8dee9
+palette = 0=#353b45
+palette = 1=#ff6b6b
+palette = 2=#98c379
+palette = 3=#ffd166
+palette = 4=#5ea1ff
+palette = 5=#c792ea
+palette = 6=#a0a8c0
+palette = 7=#eef2ff
+palette = 8=#545862
+palette = 9=#ff6b6b
+palette = 10=#98c379
+palette = 11=#ffd166
+palette = 12=#5ea1ff
+palette = 13=#c792ea
+palette = 14=#a0a8c0
+palette = 15=#eef2ff
+selection-background = 3e4556
+selection-foreground = eef2ff
+
+# Scrollback -- zellij handles this, keep Ghostty's minimal
+scrollback-limit = 1000
+
+# Keyboard -- critical for zellij keybinding passthrough
+macos-option-as-alt = true
+
+# Shift+Enter sends LF (0x0a) instead of Enter's CR (0x0d).
+# Claude Code (raw mode) distinguishes LF from CR → inserts newline.
+# Remote shells (cooked mode) treat LF same as Enter → no breakage.
+keybind = shift+enter=text:\x0a
+
+# Shell integration
+shell-integration = zsh
+
+# Global hotkey -- bring Ghostty window forward from any app
+keybind = global:ctrl+shift+t=toggle_visibility
+
+# Cmd+T = new tab (default, auto-attaches zellij via .zshrc)
+
+# Terminal type -- remote servers don't have xterm-ghostty terminfo
+term = xterm-256color
+
+# Performance
+auto-update = check

@@ -26,6 +26,7 @@ readonly CONFIG_MAPPINGS=(
     "starship.toml:.config/starship.toml"
     "fzf.zsh:.fzf.zsh"
     "zellij:.config/zellij"
+    "ghostty:.config/ghostty"
 )
 
 log_info() { printf '\033[32m[INFO]\033[0m %s\n' "$*"; }
