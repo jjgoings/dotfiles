@@ -43,6 +43,9 @@ fi
 # Force Node.js to prefer IPv4 (Pi has no working IPv6 egress)
 export NODE_OPTIONS="--dns-result-order=ipv4first"
 
+# Suppress benign MPI/OFI atomics warnings
+export MPIR_CVAR_CH4_OFI_ENABLE_ATOMICS=0
+
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --bind=ctrl-k:kill-line \
 --color=fg:#d8dee9,bg:-1,hl:#c792ea,fg+:#eef2ff,bg+:#353b45,hl+:#c792ea \
 --color=info:#ffd166,prompt:#5ea1ff,pointer:#ff6b6b,marker:#c792ea,spinner:#98c379"
@@ -298,7 +301,10 @@ codex() {
 # Auto-attach to zellij only on machines that opt in via ~/.local_zshrc
 if [[ "${ENABLE_AUTO_ZELLIJ:-0}" == "1" ]] && command -v zellij &>/dev/null \
     && [[ -z "$ZELLIJ" ]] && [[ -o interactive ]] \
+    && [[ -t 0 ]] && [[ -t 1 ]] && [[ "${TERM:-}" != "dumb" ]] \
     && [[ "$TERM_PROGRAM" != "vscode" ]] && [[ -z "$INSIDE_EMACS" ]]; then
     # Don't wrap the client in `timeout`: it kills a healthy attached session.
+    [[ "$PWD" == "/" ]] && builtin cd "$HOME"
     zellij attach -c
+    ENABLE_AUTO_ZELLIJ=0  # don't re-attach after detach
 fi
