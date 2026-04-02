@@ -2,7 +2,7 @@ Dotfiles
 ========
 
 This repo is the source of truth for my shell, terminal, git, tmux, zellij,
-and Vim configuration.
+Codex CLI defaults, and Vim configuration.
 
 The installer is intentionally narrow:
 
@@ -38,6 +38,9 @@ Notes
   run from; it does not assume `~/dotfiles`.
 - Machine-specific shell config belongs in `~/.local_zshrc`.
 - Secrets belong in `~/.private`.
+- Codex uses a tracked template at `codex/config.toml.template`. The installer
+  bootstraps `~/.codex/config.toml` locally so Codex can write machine-specific
+  state there without dirtying the repo.
 - Auto-starting `zellij` is gated behind `ENABLE_AUTO_ZELLIJ=1` in
   `~/.local_zshrc`, so carrying the repo to remote machines does not enable it
   by default.

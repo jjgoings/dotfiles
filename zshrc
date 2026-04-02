@@ -278,24 +278,7 @@ codex() {
         _nvm_load || return $?
     fi
 
-    local -a args
-    local arg
-    args=("$@")
-
-    for arg in "${args[@]}"; do
-        [[ "$arg" == "--no-alt-screen" ]] && { command codex "${args[@]}"; return $?; }
-    done
-
-    # Many SSH clients, including Termius, do not forward a client-specific
-    # identifier into the remote shell. Prefer inline mode for all SSH sessions
-    # so scrollback remains usable.
-    if [[ -n "$SSH_TTY" || "$TERM_PROGRAM" == "Termius" || -n "$TERMIUS_APP_VERSION" ]]; then
-        command codex --no-alt-screen "${args[@]}"
-    elif [[ -n "$ZELLIJ" ]]; then
-        command codex --no-alt-screen "${args[@]}"
-    else
-        command codex "${args[@]}"
-    fi
+    command codex "$@"
 }
 
 # Auto-attach to zellij only on machines that opt in via ~/.local_zshrc

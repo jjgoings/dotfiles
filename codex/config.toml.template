@@ -1,0 +1,19 @@
+# Seed ~/.codex/config.toml with portable defaults only.
+# Codex may append machine-local state such as [projects."..."] trust entries
+# after first use.
+
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+personality = "pragmatic"
+
+[tui]
+alternate_screen = "never"
+
+[features]
+unified_exec = true
+steer = true
+multi_agent = true
+prevent_idle_sleep = true
+
+[plugins."gmail@openai-curated"]
+enabled = true

@@ -259,12 +259,57 @@ create_gitconfig_local() {
 EOF
 }
 
+create_codex_config() {
+    local target="$HOME/.codex/config.toml"
+    local template="$DOTFILES_DIR/codex/config.toml.template"
+    local legacy_source="$DOTFILES_DIR/codex/config.toml"
+    local resolved
+
+    [[ -f "$template" ]] || {
+        log_warn "Skipping missing Codex config template: codex/config.toml.template"
+        return
+    }
+
+    run mkdir -p "$(dirname "$target")"
+
+    if [[ -L "$target" ]]; then
+        resolved="$(resolve_path "$target")"
+        if [[ "$resolved" == "$legacy_source" || "$resolved" == "$template" ]]; then
+            backup_target "$target" ".codex/config.toml"
+            log_info "Converting repo-managed Codex config into a local file"
+            if (( DRY_RUN )); then
+                return
+            fi
+
+            cp "$target" "$target.tmp"
+            rm -f "$target"
+            mv "$target.tmp" "$target"
+            chmod 600 "$target"
+            return
+        fi
+    fi
+
+    if [[ -e "$target" || -L "$target" ]]; then
+        log_info "Keeping existing ~/.codex/config.toml"
+        return
+    fi
+
+    log_info "Creating ~/.codex/config.toml from template"
+    if (( DRY_RUN )); then
+        return
+    fi
+
+    cp "$template" "$target"
+    chmod 600 "$target"
+}
+
 create_local_files() {
     (( CREATE_LOCAL_FILES )) || return
 
     create_private_file
     create_local_zshrc
     create_gitconfig_local
+    create_codex_config
 }
 
 verify_links() {
