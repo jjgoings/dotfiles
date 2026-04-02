@@ -259,6 +259,25 @@ create_gitconfig_local() {
 EOF
 }
 
+merge_codex_config() {
+    local template="$1"
+    local target="$2"
+    local merger="$DOTFILES_DIR/codex/merge_config.py"
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        log_warn "python3 not found; skipping Codex config refresh"
+        return
+    fi
+
+    if [[ ! -f "$merger" ]]; then
+        log_warn "Skipping missing Codex config merger: codex/merge_config.py"
+        return
+    fi
+
+    log_info "Refreshing portable Codex defaults from template"
+    run python3 "$merger" "$template" "$target"
+}
+
 create_codex_config() {
     local target="$HOME/.codex/config.toml"
     local template="$DOTFILES_DIR/codex/config.toml.template"
@@ -291,6 +310,7 @@ create_codex_config() {
 
     if [[ -e "$target" || -L "$target" ]]; then
         log_info "Keeping existing ~/.codex/config.toml"
+        merge_codex_config "$template" "$target"
         return
     fi
 

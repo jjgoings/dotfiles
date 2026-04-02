@@ -39,8 +39,9 @@ Notes
 - Machine-specific shell config belongs in `~/.local_zshrc`.
 - Secrets belong in `~/.private`.
 - Codex uses a tracked template at `codex/config.toml.template`. The installer
-  bootstraps `~/.codex/config.toml` locally so Codex can write machine-specific
-  state there without dirtying the repo.
+  bootstraps `~/.codex/config.toml` locally, then refreshes the portable keys
+  from the template on later runs while preserving machine-specific state like
+  project trust entries.
 - Auto-starting `zellij` is gated behind `ENABLE_AUTO_ZELLIJ=1` in
   `~/.local_zshrc`, so carrying the repo to remote machines does not enable it
   by default.
