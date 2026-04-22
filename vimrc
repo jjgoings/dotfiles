@@ -227,12 +227,8 @@ Plug 'tpope/vim-commentary'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" Language support and linting
+" Language support
 Plug 'sheerun/vim-polyglot'
-Plug 'dense-analysis/ale'
-
-" Documentation generator (optional)
-" Plug 'kkoomen/vim-doge', { 'do': 'npm i --no-save && npm run build:binary:unix' }
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
@@ -320,6 +316,3 @@ set updatetime=100
 " Load all of the helptags now, after plugins have been loaded.
 " All messages and errors will be ignored.
 silent! helptags ALL
-
-" Documentation generator configuration
-" let g:doge_doc_standard_python = 'numpy'
